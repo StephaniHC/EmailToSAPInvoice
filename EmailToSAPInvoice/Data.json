@@ -1,0 +1,38 @@
+{
+  "Proveedores": [
+    {
+      "Nombre": "Gmail",
+      "Metodos": [
+        {
+          "Nombre": "imap",
+          "Url": "imap.gmail.com",
+          "Puerto": 993
+        }
+      ],
+      "Clientes": [
+        {
+          "Email": "stepheredia15@gmail.com",
+          "Password": "vgkydqauazahswwe"
+        }
+      ]
+    },
+    {
+      "Nombre": "Hotmail",
+      "Metodos": [
+        {
+          "Nombre": "pop3",
+          "Url": "pop.gmail.com",
+          "Puerto": 995
+        },
+        {
+          "Nombre": "imap",
+          "Url": "imap.gmail.com",
+          "Puerto": 993
+        }
+      ],
+      "Clientes": [
+
+      ]
+    }
+  ]
+}

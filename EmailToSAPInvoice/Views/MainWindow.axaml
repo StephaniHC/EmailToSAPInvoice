@@ -1,0 +1,90 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:EmailToSAPInvoice.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1180" d:DesignHeight="640"
+        x:Class="EmailToSAPInvoice.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="EmailToSAPInvoice">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+	<Grid Margin="15">
+		<TextBlock Text="{Binding LabelTittle}"
+				   Margin="60"
+				   HorizontalAlignment="Left"
+				   VerticalAlignment="Top"
+				   FontSize="15"
+				   FontWeight="Regular"
+				   FontFamily="Montserrat"/>
+		<ScrollViewer VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Auto">
+			<StackPanel>
+				<!-- Cabecera -->
+				<Grid Margin="480,50,0,0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="120" />
+						<ColumnDefinition Width="180" />
+						<ColumnDefinition Width="300" />
+						<ColumnDefinition Width="75" />
+					</Grid.ColumnDefinitions>
+					<TextBlock Grid.Column="0" Text="Fecha" FontWeight="Bold" />
+					<TextBlock Grid.Column="1" Text="Asunto" FontWeight="Bold" />
+					<TextBlock Grid.Column="2" Text="Adjunto" FontWeight="Bold" />
+					<TextBlock Grid.Column="3" Text="Estado" FontWeight="Bold" />
+				</Grid>
+				<!-- ListBox -->
+				<ListBox Items="{Binding ResultE}"
+						 Margin="450,10,100,0" >
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="120" />
+									<ColumnDefinition Width="180" />
+									<ColumnDefinition Width="300" />
+									<ColumnDefinition Width="75" />
+								</Grid.ColumnDefinitions>
+								<TextBlock Grid.Column="0" Text="{Binding Date}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+								<TextBlock Grid.Column="1" Text="{Binding Subject}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+								<TextBlock Grid.Column="2" Text="{Binding Attached}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="10"/>
+								<TextBlock Grid.Column="3" Text="{Binding Status}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+							</Grid>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</StackPanel>
+		</ScrollViewer>
+
+		<ListBox Items="{Binding ResultEmails}"
+				   Margin="60,90,858,200"
+				   FontSize="11"
+				   FontWeight="Normal"
+				   IsEnabled="True"
+				   FontFamily="Montserrat"/>
+		<TextBlock Text="{Binding Greeting}"
+				   HorizontalAlignment="Center"
+				   VerticalAlignment="Top"
+				   FontSize="25"
+				   FontWeight="Medium"
+				   FontFamily="Montserrat"
+				   TextWrapping="Wrap"/>
+		<Button Content="{Binding ButtonAddEmail}"
+				Command="{Binding GoToSecondWindow}"
+				IsEnabled="True"
+				FontFamily="Segoe UI"
+				Margin="300,0,0,480"
+				Background="SeaGreen"/>
+		<Button Content="{Binding ButtonRead}"
+				Command="{Binding DownloadXmlAttachmentsCommand}"
+				FontFamily="Segoe UI"
+				Margin="300,0,0,380"
+				Background="SkyBlue"  />
+	</Grid>
+
+</Window>
