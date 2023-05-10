@@ -1,0 +1,89 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:vm="using:EmailToSAPInvoice.ViewModels"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="EmailToSAPInvoice.Views.MainUserEmailWindow"
+		Title="Registro Correo"  MinWidth="500" MinHeight="450" MaxWidth="500" MaxHeight="450">
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+		<vm:MainUserEmailWindowViewModel/>
+	</Design.DataContext>
+	<Grid Margin="15">
+		<TextBlock Text="{Binding Tittle0}"
+				   HorizontalAlignment="Center"
+				   VerticalAlignment="Top"
+				   FontSize="20"
+				   FontWeight="Medium"
+				   FontFamily="Montserrat"
+				   TextWrapping="Wrap"/>
+		<TextBlock Text="{Binding LabelEmail}"
+				   Margin="30,60,50,0"
+				   HorizontalAlignment="Left"
+				   VerticalAlignment="Top"
+				   FontSize="15"
+				   FontWeight="Regular"
+				   FontFamily="Montserrat"/>
+		<TextBox Text="{Binding Email, Mode=TwoWay}"
+				  Name="boxEmail"
+				   Margin="30,100,260,300"
+				   FontSize="13"
+				   FontWeight="Normal"
+				   FontFamily="Montserrat"/>
+		<TextBlock Text="{Binding LabelPassword}"
+				   Margin="250,60,50,0"
+				   HorizontalAlignment="Left"
+				   VerticalAlignment="Top"
+				   FontSize="15"
+				   FontWeight="Regular"
+				   FontFamily="Montserrat"/>
+		<TextBox Text="{Binding Password, Mode=TwoWay}"
+				  Name="boxPassword"
+				   Margin="250,100,50,300"
+				   FontSize="13"
+				   FontWeight="Normal"
+				   FontFamily="Montserrat"/>
+		<TextBlock Text="{Binding LabelProvider}"
+				   Margin="30,130,50,0"
+				   HorizontalAlignment="Left"
+				   VerticalAlignment="Top"
+				   FontSize="15"
+				   FontWeight="Regular"
+				   FontFamily="Montserrat"/>
+		<Button Content="{Binding ButtonSave}"
+				FontFamily="Segoe UI"
+				Margin="350,310,0,0"
+			Background="SeaGreen"
+			Command="{Binding SaveCommand}"/>
+		<Button Content="{Binding ButtonBack}"
+				FontFamily="Segoe UI"
+				Margin="280,310,0,0"
+				Command="{Binding BackCommand}"/>
+		<Grid>
+			<ItemsControl Items="{Binding ListProveedores}"
+						  Margin="30,160,0,0"
+						  VerticalAlignment="Top">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal">
+							<RadioButton Content="{Binding}"
+										 IsChecked="{Binding Activo}"
+										 GroupName="Proveedores"
+										 Checked="RadioButton_Checked"/>
+						</StackPanel>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+			<StackPanel Orientation="Vertical"
+						HorizontalAlignment="Right"
+						VerticalAlignment="Top">
+				<Button Content="{Binding ButtonAddProvider}"
+						IsEnabled="True"
+						Command="{Binding GoToFloatingWindow}"
+						Background="SkyBlue"/>
+			</StackPanel>
+		</Grid>
+	</Grid>
+</Window>

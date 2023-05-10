@@ -1,0 +1,88 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:vm="using:EmailToSAPInvoice.ViewModels"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="EmailToSAPInvoice.Views.MainProviderWindow" 
+		Title="Registro Proveedor" MinWidth="450" MinHeight="290" MaxWidth="450" MaxHeight="290">
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+		<vm:MainProviderWindowViewModel/>
+	</Design.DataContext>
+	<Grid Margin="15">
+		<TextBlock Text="{Binding Tittle1}"
+				   HorizontalAlignment="Center"
+				   VerticalAlignment="Top"
+				   FontSize="20"
+				   FontWeight="Medium"
+				   FontFamily="Montserrat"
+				   TextWrapping="Wrap"/>
+		<TextBlock Text="{Binding LabelName}"
+				   Margin="30,50,50,0"
+				   HorizontalAlignment="Left"
+				   VerticalAlignment="Top"
+				   FontSize="15"
+				   FontWeight="Regular"
+				   FontFamily="Montserrat"/>
+		<TextBox  Text="{Binding Nombre, Mode=TwoWay}"
+				  Name="boxName"
+				   Margin="30,90,260,300"
+				   FontSize="13"
+				   FontWeight="Normal"
+				   FontFamily="Montserrat"/>
+		<TextBlock Text="{Binding LabelPort}"
+				   Margin="250,50,50,0"
+				   HorizontalAlignment="Left"
+				   VerticalAlignment="Top"
+				   FontSize="15"
+				   FontWeight="Regular"
+				   FontFamily="Montserrat"/>
+		<TextBox  Text="{Binding Puerto, Mode=TwoWay}"
+				  Name="boxPort"
+				   Margin="250,90,50,300"
+				   FontSize="13"
+				   FontWeight="Normal"
+				   FontFamily="Montserrat"/>
+		<TextBlock Text="{Binding LabelURL}"
+				   Margin="30,120,50,0"
+				   HorizontalAlignment="Left"
+				   VerticalAlignment="Top"
+				   FontSize="15"
+				   FontWeight="Regular"
+				   FontFamily="Montserrat"/>
+		<TextBox  Text="{Binding Url, Mode=TwoWay}"
+				  Name="boxURL"
+				   Margin="30,160,260,300"
+				   FontSize="13"
+				   FontWeight="Normal"
+				   FontFamily="Montserrat"/>
+		<TextBlock Text="{Binding LabelMethod}"
+				   Margin="250,120,50,0"
+				   HorizontalAlignment="Left"
+				   VerticalAlignment="Top"
+				   FontSize="15"
+				   FontWeight="Regular"
+				   FontFamily="Montserrat"/>
+		<Button Content="{Binding ButtonSave}"
+				FontFamily="Segoe UI"
+				Margin="340,220,0,0"
+				Background="SeaGreen"
+				Command="{Binding SaveCommand}"/>
+		<Button Content="{Binding ButtonBack}"
+				FontFamily="Segoe UI"
+				Margin="270,220,0,0"
+				Command="{Binding BackCommand}"/>
+		<StackPanel Margin="250,140,0,0">
+			<RadioButton GroupName="NombreMetodo"
+						Content="{Binding Opcion1}"
+						Checked="RadioButton_Checked">
+			</RadioButton>
+			<RadioButton GroupName="NombreMetodo"
+						Content="{Binding Opcion2}"
+						Checked="RadioButton_Checked">
+			</RadioButton>
+		</StackPanel>
+	</Grid>
+</Window>

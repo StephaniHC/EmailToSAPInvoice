@@ -15,6 +15,7 @@ using EmailToSAPInvoice.Models;
 using MimeKit;
 using MailKit.Net.Pop3;
 using ReactiveUI;
+using EmailToSAPInvoice.Views;
 
 namespace EmailToSAPInvoice.ViewModels
 {
@@ -51,8 +52,8 @@ namespace EmailToSAPInvoice.ViewModels
         {
             GoToSecondWindow = ReactiveCommand.Create(() =>
             {
-               // var secondWindow = new MainSecondWindow();
-               // secondWindow.Show();
+               var userEmailWindow = new MainUserEmailWindow();
+                userEmailWindow.Show();
             });
             GetRutas();
             GetListaRegistrados();
@@ -71,6 +72,7 @@ namespace EmailToSAPInvoice.ViewModels
                 Route ruta = JsonSerializer.Deserialize<Route>(json);
                 rutaData = ruta.Read;
                 rutaDownload = ruta.Download; 
+               
             }
             else
             {  

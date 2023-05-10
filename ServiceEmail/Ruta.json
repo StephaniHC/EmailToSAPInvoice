@@ -1,0 +1,5 @@
+{
+  "Read": "../EmailToSAPInvoice/Data.json",
+  "Base": "../EmailToSAPInvoice",
+  "Download": "../EmailToSAPInvoice"
+}
