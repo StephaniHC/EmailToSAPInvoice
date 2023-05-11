@@ -18,7 +18,7 @@ namespace EmailToSAPInvoice.ViewModels
             logger = log4net.LogManager.GetLogger(typeof(ServiceLayerConnection).ToString());
             this.serviceLayerConnection = serviceLayerConnection;
         }
-        public Response ServiceLayer(InvoiceRequest invoiceRequest)
+        public Response ServiceLayer( )
         {
             Console.Write("Ingreso a la funcion update Data SAP");
             Response response = new Response();

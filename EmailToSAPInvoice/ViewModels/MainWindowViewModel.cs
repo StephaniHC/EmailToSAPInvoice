@@ -46,8 +46,10 @@ namespace EmailToSAPInvoice.ViewModels
                 // Si tu ViewModel implementa INotifyPropertyChanged, no olvides llamar al evento PropertyChanged aquí.
                 // RaisePropertyChanged(nameof(ResultE));
             }
-        } 
+        }
 
+        private SAPServiceLayerConnection sapService;
+        public UploadDataToSAP ejemplo;
         public MainWindowViewModel()
         {
             GoToSecondWindow = ReactiveCommand.Create(() =>
@@ -61,7 +63,17 @@ namespace EmailToSAPInvoice.ViewModels
             Rutas = new Route();
             databaseHandler = new DatabaseHandler();
             ResultE = new ObservableCollection<EmailResult>();
-            GetData();  
+            GetData();
+            ejemplo.ServiceLayer();
+
+           // sapService = new SAPServiceLayerConnection();
+           // sapService.ConnectToSAP().GetAwaiter().GetResult();
+        }
+
+        public void GetConnection()
+        {
+
+
         }
         private void GetRutas()
         {
@@ -236,10 +248,6 @@ namespace EmailToSAPInvoice.ViewModels
                     Console.Write($"Archivo: {attachmentName}, no encontrado en la carpeta");
                 }
             }
-        }
-        public void GetConnection()
-        {   
-             
         }
     }
 }

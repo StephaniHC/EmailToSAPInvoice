@@ -1,8 +1,8 @@
-﻿using Avalonia;
+﻿/*using Avalonia;
 using Avalonia.ReactiveUI;
 using System;
 
-namespace ProyectReadEmails
+namespace EmailToSAPInvoice
 {
     class Program
     {
@@ -21,9 +21,9 @@ namespace ProyectReadEmails
                 .UseReactiveUI();
 
     }
-}
-/*con proyect satarup
- * using Avalonia;
+
+}*/
+using Avalonia;
 using Avalonia.ReactiveUI;
 using System;
 using Microsoft.Extensions.Hosting;
@@ -63,4 +63,4 @@ namespace EmailToSAPInvoice
             Host.CreateDefaultBuilder(args);
     }
      
-}*/
+}
