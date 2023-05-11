@@ -1,4 +1,4 @@
-﻿/*using Avalonia;
+﻿using Avalonia;
 using Avalonia.ReactiveUI;
 using System;
 
@@ -22,7 +22,8 @@ namespace EmailToSAPInvoice
 
     }
 
-}*/
+}
+/*
 using Avalonia;
 using Avalonia.ReactiveUI;
 using System;
@@ -63,4 +64,4 @@ namespace EmailToSAPInvoice
             Host.CreateDefaultBuilder(args);
     }
      
-}
+}*/

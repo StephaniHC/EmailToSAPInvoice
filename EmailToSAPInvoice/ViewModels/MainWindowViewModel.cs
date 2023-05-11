@@ -24,6 +24,7 @@ namespace EmailToSAPInvoice.ViewModels
         public string Greeting => "Correos Adjuntos XML";
         public string Result { get; set; } = "read emails only xml";  
         public string ButtonAddEmail => "Añadir Correos";
+        public string ButtonServer => "Server Layer";
         public string ButtonRead => "Actualizar";
         public string LabelTittle  => "Lista de Registrados"; 
         public List<string> ResultEmails { get; set; } = new List<string>();
@@ -32,6 +33,7 @@ namespace EmailToSAPInvoice.ViewModels
         public ObservableCollection<Datas> DatasEmailList { get; set; } = new ObservableCollection<Datas>();
         public ICommand GoToSecondWindow { get; set; }
         public ICommand DownloadXmlAttachmentsCommand => new RelayCommand(SetAttachments);
+        public ICommand GoServerLayer => new RelayCommand(GetConnection);
         public string rutaData { get; set; }
         public string rutaDownload { get; set; }
         public Route Rutas { get; set; } 
@@ -48,8 +50,7 @@ namespace EmailToSAPInvoice.ViewModels
             }
         }
 
-        private SAPServiceLayerConnection sapService;
-        public UploadDataToSAP ejemplo;
+        private SAPServiceLayerConnection sapService; 
         public MainWindowViewModel()
         {
             GoToSecondWindow = ReactiveCommand.Create(() =>
@@ -63,17 +64,13 @@ namespace EmailToSAPInvoice.ViewModels
             Rutas = new Route();
             databaseHandler = new DatabaseHandler();
             ResultE = new ObservableCollection<EmailResult>();
-            GetData();
-            ejemplo.ServiceLayer();
-
-           // sapService = new SAPServiceLayerConnection();
-           // sapService.ConnectToSAP().GetAwaiter().GetResult();
+            GetData(); 
         }
 
         public void GetConnection()
         {
-
-
+            sapService = new SAPServiceLayerConnection();
+            sapService.ConnectToSAP().GetAwaiter().GetResult();
         }
         private void GetRutas()
         {

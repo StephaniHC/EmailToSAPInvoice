@@ -41,7 +41,6 @@ namespace EmailToSAPInvoice.Service
                     Password = config.Password,
                     CompanyDB = config.CompanyDB
                 };
-                Console.Write("Data " + loginInfo);
                 var content = new StringContent(JsonConvert.SerializeObject(loginInfo), Encoding.UTF8, "application/json");
                 var response = await client.PostAsync(config.Url + "Login", content);
 

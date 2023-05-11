@@ -60,9 +60,8 @@
 				</ListBox>
 			</StackPanel>
 		</ScrollViewer>
-
 		<ListBox Items="{Binding ResultEmails}"
-				   Margin="60,90,858,200"
+				   Margin="60,90,1120,300"
 				   FontSize="11"
 				   FontWeight="Normal"
 				   IsEnabled="True"
@@ -84,7 +83,12 @@
 				Command="{Binding DownloadXmlAttachmentsCommand}"
 				FontFamily="Segoe UI"
 				Margin="300,0,0,380"
-				Background="SkyBlue"  />
+				Background="SkyBlue"/>
+		<Button Content="{Binding ButtonServer}"
+				Command="{Binding GoServerLayer}"
+				FontFamily="Segoe UI"
+				Margin="300,0,0,280"
+				Background="Brown"/>
 	</Grid>
 
 </Window>
