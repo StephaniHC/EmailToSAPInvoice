@@ -69,10 +69,6 @@
               "target": "Package",
               "version": "[4.0.0, )"
             },
-            "Microsoft.Extensions.Configuration.Abstractions": {
-              "target": "Package",
-              "version": "[3.1.11, )"
-            },
             "Microsoft.OData.Client": {
               "target": "Package",
               "version": "[7.12.4, )"

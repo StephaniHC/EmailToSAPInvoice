@@ -1,5 +1,5 @@
 {
-  "Read": "../ProyectReadEmails/Data.json",
-  "Base": "../ProyectReadEmails",
-  "Download": "../ProyectReadEmails"
+  "Read": "../EmailToSAPInvoice/Data.json",
+  "Base": "../EmailToSAPInvoice",
+  "Download": "../EmailToSAPInvoice"
 }

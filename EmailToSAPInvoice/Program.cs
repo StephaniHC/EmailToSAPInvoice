@@ -1,17 +1,19 @@
 ﻿using Avalonia;
 using Avalonia.ReactiveUI;
-using System;
+using System; 
+using Microsoft.Extensions.Hosting; 
 
 namespace EmailToSAPInvoice
 {
     internal class Program
     {
-        // Initialization code. Don't use any Avalonia, third-party APIs or any
-        // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-        // yet and stuff might break.
         [STAThread]
-        public static void Main(string[] args) => BuildAvaloniaApp()
-            .StartWithClassicDesktopLifetime(args);
+        public static void Main(string[] args)
+        {
+            var host = CreateHostBuilder(args).Build();
+            host.StartAsync();  
+            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+        }
 
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
@@ -19,5 +21,13 @@ namespace EmailToSAPInvoice
                 .UsePlatformDetect()
                 .LogToTrace()
                 .UseReactiveUI();
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
     }
+
 }

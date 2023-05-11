@@ -2518,7 +2518,6 @@
           "Avalonia.ReactiveUI": "0.10.18",
           "Interop.SAPbobsCOM": "8.82.76",
           "MailKit": "4.0.0",
-          "Microsoft.Extensions.Configuration.Abstractions": "3.1.11",
           "Microsoft.OData.Client": "7.12.4",
           "Microsoft.OData.Core": "7.12.4",
           "MimeKit": "4.0.0",
