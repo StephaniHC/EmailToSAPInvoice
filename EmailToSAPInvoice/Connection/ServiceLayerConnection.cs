@@ -14,22 +14,15 @@ namespace EmailToSAPInvoice.Connection
     public class ServiceLayerConnection
     {
         public static Company company;
-        private string serviceLayerUrl;
-        private log4net.ILog logger = null;
+        private string serviceLayerUrl; 
 
         public ServiceLayerConnection(IConfiguration configuration)
-        {
-            logger = log4net.LogManager.GetLogger(typeof(ServiceLayerConnection).ToString());
-            logger.Error("----------------------CONNECTION--------------------------------");
+        { 
             company = new Company();
             company.CompanyDB = configuration.GetValue<string>("SapConfiguration:CompanyDB");
-            logger.Error("ERROR CONNECTION CompanyDB:" + company.CompanyDB);
             company.UserName = configuration.GetValue<string>("SapConfiguration:UserName");
-            logger.Error("ERROR CONNECTION UserName:" + company.UserName);
             company.Password = configuration.GetValue<string>("SapConfiguration:Password");
-            logger.Error("ERROR CONNECTION Password:" + company.Password);
-            company.Language = (SAPbobsCOM.BoSuppLangs)configuration.GetValue<int>("SapConfiguration:Language");
-            logger.Error("ERROR CONNECTION Language:" + company.Language);
+            company.Language = (SAPbobsCOM.BoSuppLangs)configuration.GetValue<int>("SapConfiguration:Language"); 
 
             serviceLayerUrl = configuration.GetValue<string>("SapConfiguration:Url");
         }

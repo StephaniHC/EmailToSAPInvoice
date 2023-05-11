@@ -24,6 +24,7 @@ namespace EmailToSAPInvoice.Service
         private void LoadConfiguration()
         {
             config = new ConfigurationBuilder()
+                //.SetBasePath(Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).FullName).FullName).FullName)
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false)
                 .Build()
@@ -40,7 +41,7 @@ namespace EmailToSAPInvoice.Service
                     UserName = config.UserName,
                     Password = config.Password,
                     CompanyDB = config.CompanyDB
-                };
+                }; 
                 var content = new StringContent(JsonConvert.SerializeObject(loginInfo), Encoding.UTF8, "application/json");
                 var response = await client.PostAsync(config.Url + "Login", content);
 

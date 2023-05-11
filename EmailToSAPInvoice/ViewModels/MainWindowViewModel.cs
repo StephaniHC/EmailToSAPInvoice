@@ -16,6 +16,10 @@ using MimeKit;
 using MailKit.Net.Pop3;
 using ReactiveUI;
 using EmailToSAPInvoice.Views;
+using EmailToSAPInvoice.Connection;
+using SAPB1;
+using System.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace EmailToSAPInvoice.ViewModels
 {
@@ -26,7 +30,7 @@ namespace EmailToSAPInvoice.ViewModels
         public string ButtonAddEmail => "Añadir Correos";
         public string ButtonServer => "Server Layer";
         public string ButtonRead => "Actualizar";
-        public string LabelTittle  => "Lista de Registrados"; 
+        public string LabelTittle  => "Lista de Registrados";  
         public List<string> ResultEmails { get; set; } = new List<string>();
         public List<List<string>> dataReadEmail{ get; set; } = new List<List<string>>(); 
         public IReadOnlyList<IReadOnlyList<string>> DataPop => dataReadEmail.AsReadOnly();
@@ -44,11 +48,11 @@ namespace EmailToSAPInvoice.ViewModels
             get { return _resultE; }
             set
             {
-                _resultE = value;
-                // Si tu ViewModel implementa INotifyPropertyChanged, no olvides llamar al evento PropertyChanged aquí.
-                // RaisePropertyChanged(nameof(ResultE));
+                _resultE = value; 
             }
         }
+        private ServiceLayerConnection serviceLayerConnection;
+        private ServiceLayer serviceLayerContext;
 
         private SAPServiceLayerConnection sapService; 
         public MainWindowViewModel()
@@ -64,13 +68,15 @@ namespace EmailToSAPInvoice.ViewModels
             Rutas = new Route();
             databaseHandler = new DatabaseHandler();
             ResultE = new ObservableCollection<EmailResult>();
-            GetData(); 
+            GetData();
+            sapService = new SAPServiceLayerConnection();
+            sapService.ConnectToSAP().GetAwaiter().GetResult();
         }
 
         public void GetConnection()
         {
-            sapService = new SAPServiceLayerConnection();
-            sapService.ConnectToSAP().GetAwaiter().GetResult();
+            ////sapService = new SAPServiceLayerConnection();
+            ///sapService.ConnectToSAP().GetAwaiter().GetResult();  
         }
         private void GetRutas()
         {

@@ -17,6 +17,5 @@ namespace EmailToSAPInvoice
         { 
             services.AddSingleton(new ServiceLayerConnection(Configuration));   
         }
-         
     }
 }
