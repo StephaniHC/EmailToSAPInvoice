@@ -239,8 +239,7 @@ namespace EmailToSAPInvoice.ViewModels
         }
         public void GetConnection()
         {   
-            //InvoiceRequest invoiceRequest = new InvoiceRequest(); 
-            //Response response = _uploadDataToSAP.ServiceLayer(invoiceRequest); 
+             
         }
     }
 }

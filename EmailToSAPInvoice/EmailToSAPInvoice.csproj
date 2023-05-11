@@ -26,12 +26,17 @@
     <PackageReference Include="Interop.SAPbobsCOM" Version="8.82.76" />
     <PackageReference Include="log4net" Version="2.0.15" />
     <PackageReference Include="MailKit" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.11" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.11" />
     <PackageReference Include="Microsoft.OData.Client" Version="7.12.4" />
     <PackageReference Include="Microsoft.OData.Core" Version="7.12.4" />
+    <PackageReference Include="Microsoft.OData.Edm" Version="7.12.4" />
+    <PackageReference Include="Microsoft.Spatial" Version="7.12.4" />
     <PackageReference Include="MimeKit" Version="4.0.0" />
     <PackageReference Include="Refit" Version="6.3.2" />
     <PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Text.Json" Version="7.0.2" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />
   </ItemGroup>
