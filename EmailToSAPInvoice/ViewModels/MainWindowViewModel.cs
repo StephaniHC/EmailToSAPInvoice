@@ -16,8 +16,6 @@ using MimeKit;
 using MailKit.Net.Pop3;
 using ReactiveUI;
 using EmailToSAPInvoice.Views;
-using EmailToSAPInvoice.Connection;
-using SAPB1;
 using System.Configuration;
 using Microsoft.Extensions.Configuration;
 
@@ -51,8 +49,6 @@ namespace EmailToSAPInvoice.ViewModels
                 _resultE = value; 
             }
         }
-        private ServiceLayerConnection serviceLayerConnection;
-        private ServiceLayer serviceLayerContext;
 
         private SAPServiceLayerConnection sapService; 
         public MainWindowViewModel()
@@ -75,8 +71,8 @@ namespace EmailToSAPInvoice.ViewModels
 
         public void GetConnection()
         {
-            ////sapService = new SAPServiceLayerConnection();
-            ///sapService.ConnectToSAP().GetAwaiter().GetResult();  
+            sapService = new SAPServiceLayerConnection();
+            sapService.ConnectToSAP().GetAwaiter().GetResult();  
         }
         private void GetRutas()
         {

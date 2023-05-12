@@ -23,46 +23,4 @@ namespace EmailToSAPInvoice
 
     }
 
-}
-/*
-using Avalonia;
-using Avalonia.ReactiveUI;
-using System;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
-using System.IO;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace EmailToSAPInvoice
-{
-    internal class Program
-    {
-        [STAThread]
-        public static void Main(string[] args)
-        {
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .Build();
-
-            var startup = new Startup(configuration);
-            var services = new ServiceCollection();
-            startup.ConfigureServices(services);
-
-            var host = CreateHostBuilder(args).Build();
-            host.StartAsync();
-
-            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
-        }
-
-        public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>()
-                .UsePlatformDetect()
-                .LogToTrace()
-                .UseReactiveUI();
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args);
-    }
-     
-}*/
+} 
