@@ -69,8 +69,8 @@ namespace EmailToSAPInvoice.ViewModels
             databaseHandler = new DatabaseHandler();
             ResultE = new ObservableCollection<EmailResult>();
             GetData();
-            sapService = new SAPServiceLayerConnection();
-            sapService.ConnectToSAP().GetAwaiter().GetResult();
+            ////sapService = new SAPServiceLayerConnection();
+            ///sapService.ConnectToSAP().GetAwaiter().GetResult();
         }
 
         public void GetConnection()
@@ -86,8 +86,7 @@ namespace EmailToSAPInvoice.ViewModels
                 string json = File.ReadAllText(directory);
                 Route ruta = JsonSerializer.Deserialize<Route>(json);
                 rutaData = ruta.Read;
-                rutaDownload = ruta.Download; 
-               
+                rutaDownload = ruta.Download;
             }
             else
             {  
