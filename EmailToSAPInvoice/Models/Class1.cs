@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using System.Xml.Serialization;
+using System.Threading.Tasks;
 
 namespace EmailToSAPInvoice.Models
 {
-    public class FacturaElectronicaCompraVenta
+    internal class Class1
     {
 
-        // NOTA: El código generado puede requerir, como mínimo, .NET Framework 4.5 o .NET Core/Standard 2.0.
+        // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
         /// <remarks/>
         [System.SerializableAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-        [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.w3.org/2001/XMLSchema-instance", IsNullable = false)]
+        [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
         public partial class facturaElectronicaCompraVenta
         {
 

@@ -16,9 +16,10 @@ using MimeKit;
 using MailKit.Net.Pop3;
 using ReactiveUI;
 using EmailToSAPInvoice.Views;
-using System.Configuration;
-using Microsoft.Extensions.Configuration;
 using System.Xml.Serialization;
+using DynamicData;
+using System.Net.Mail;
+using System.Reactive;
 
 namespace EmailToSAPInvoice.ViewModels
 {
@@ -26,8 +27,7 @@ namespace EmailToSAPInvoice.ViewModels
     {
         public string Greeting => "Correos Adjuntos XML";
         public string Result { get; set; } = "read emails only xml";  
-        public string ButtonAddEmail => "Añadir Correos";
-        public string ButtonServer => "Server Layer";
+        public string ButtonAddEmail => "Añadir Correos"; 
         public string ButtonRead => "Actualizar";
         public string LabelTittle  => "Lista de Registrados";  
         public List<string> ResultEmails { get; set; } = new List<string>();
@@ -35,8 +35,7 @@ namespace EmailToSAPInvoice.ViewModels
         public IReadOnlyList<IReadOnlyList<string>> DataPop => dataReadEmail.AsReadOnly();
         public ObservableCollection<Datas> DatasEmailList { get; set; } = new ObservableCollection<Datas>();
         public ICommand GoToSecondWindow { get; set; }
-        public ICommand DownloadXmlAttachmentsCommand => new RelayCommand(SetAttachments);
-        public ICommand GoServerLayer => new RelayCommand(GetConnection);
+        public ICommand DownloadXmlAttachmentsCommand => new RelayCommand(SetAttachments); 
         public string rutaData { get; set; }
         public string rutaDownload { get; set; }
         public Route Rutas { get; set; } 
@@ -52,7 +51,7 @@ namespace EmailToSAPInvoice.ViewModels
         }
 
         private SAPServiceLayerConnection sapService;
-        private List<FacturaElectronicaCompraVenta> facturaList;
+        private List<Factura.facturaElectronicaCompraVenta> facturaList;
         public MainWindowViewModel()
         {
             GoToSecondWindow = ReactiveCommand.Create(() =>
@@ -67,7 +66,7 @@ namespace EmailToSAPInvoice.ViewModels
             databaseHandler = new DatabaseHandler();
             ResultE = new ObservableCollection<EmailResult>();
             GetData(); 
-            facturaList = new List<FacturaElectronicaCompraVenta>();
+            facturaList = new List<Factura.facturaElectronicaCompraVenta>();
             ////sapService = new SAPServiceLayerConnection();
             ///sapService.ConnectToSAP().GetAwaiter().GetResult();
         }
@@ -244,36 +243,49 @@ namespace EmailToSAPInvoice.ViewModels
                     Console.Write($"Archivo: {attachmentName}, no encontrado en la carpeta");
                 }
             }
-        } 
+        }
+
+        public Factura.facturaElectronicaCompraVenta ReadFile(string archivo)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(Factura.facturaElectronicaCompraVenta));
+            try
+            {
+                using (StreamReader reader = new StreamReader(archivo))
+                {
+                    return (Factura.facturaElectronicaCompraVenta)serializer.Deserialize(reader);
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                Console.Write("No cumple con la estructura");
+                return null;
+            }
+        }
 
         public void GetDataInvoice()
-        {
+        { 
+            sapService = new SAPServiceLayerConnection();
             var datas = databaseHandler.GetPendingEmails();
             string xmlFolderPath = Path.Combine(rutaDownload, "descargaXML");
             foreach (Datas email in datas)
-            {
+            { 
                 string attachmentName = email.Attached;
                 string filePath = Path.Combine(xmlFolderPath, attachmentName);
                 if (File.Exists(filePath))
-                {
-                    Console.Write("Lo encontro y es : " + filePath + " \n");
-                    XmlSerializer serializer = new XmlSerializer(typeof(FacturaElectronicaCompraVenta));
-                    StreamReader reader = new StreamReader(filePath);
-                    Console.Write("lo leyo: " + reader + " \n");
-                    var factura = (FacturaElectronicaCompraVenta)serializer.Deserialize(reader);
-                    reader.Close(); 
-                    Console.Write("\n guardo: " + factura);
-                    //facturaList.Add(factura);
-                   // Console.Write("\n guardo a la lista: " + facturaList);
-                }
-                else
-                {
-                    Console.Write($"Archivo: {attachmentName}, no encontrado en la carpeta");
+                { 
+                    var factura = ReadFile(filePath);
+                    if (factura != null)
+                    { 
+                        facturaList.Add(factura);
+                        Console.Write("\n guardo a la lista: " + facturaList + "\n "); 
+                    }
+                    else
+                    {
+                        databaseHandler.UpdateStatus(email.Id, "No cumple con la estructura de .XML");
+                    }
                 }
             }
-            sapService = new SAPServiceLayerConnection();
             sapService.ConnectToSAP(facturaList).GetAwaiter().GetResult();
-
-        }
+        }  
     }
 }

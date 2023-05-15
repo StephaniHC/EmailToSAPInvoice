@@ -1,60 +1,181 @@
-<facturaElectronicaCompraVenta><facturaElectronicaCompraVenta xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="facturaElectronicaCompraVenta.xsd">
-<cabecera>
-<nitEmisor>145186023</nitEmisor>
-<razonSocialEmisor>RODUGA INVERSIONES SOCIEDAD ANONIMA</razonSocialEmisor>
-<municipio>Santa Cruz</municipio>
-<telefono>33110080</telefono>
-<numeroFactura>81825</numeroFactura>
-<cuf>9EF1CA4F32A613B92BF1EB5ECD50017702A078AA1336B84FA667FD74</cuf>
-<cufd>BQUZlQyh6T0FBNz0ZFNkI0NzY3Nzc=QnnCrENBRVlFWFVFEQThFMDEzQkNFN</cufd>
-<codigoSucursal>5</codigoSucursal>
-<direccion>AVENIDA CRISTO REDENTOR ESQ. 4TO. ANILLO NRO. S/N EDIF.: CENTRO COMERCIAL LAS BRISAS PISO: 3 DEPTO.: S/N ZONA/BARRIO: 4TO.</direccion>
-<codigoPuntoVenta>0</codigoPuntoVenta>
-<fechaEmision>2023-04-23T17:49:48.216</fechaEmision>
-<nombreRazonSocial>Stephani</nombreRazonSocial>
-<codigoTipoDocumentoIdentidad>1</codigoTipoDocumentoIdentidad>
-<numeroDocumento>3871206017</numeroDocumento>
-<complemento xsi:nil="true"></complemento>
-<codigoCliente>3871206017</codigoCliente>
-<codigoMetodoPago>1</codigoMetodoPago>
-<numeroTarjeta xsi:nil="true"></numeroTarjeta>
-<montoTotal>30.00</montoTotal>
-<montoTotalSujetoIva>30.00</montoTotalSujetoIva>
-<codigoMoneda>1</codigoMoneda>
-<tipoCambio>1.00000</tipoCambio>
-<montoTotalMoneda>30.00</montoTotalMoneda>
-<montoGiftCard xsi:nil="true"></montoGiftCard>
-<descuentoAdicional>0.00</descuentoAdicional>
-<codigoExcepcion>0</codigoExcepcion>
-<cafc xsi:nil="true"></cafc>
-<leyenda>Ley N° 453: El proveedor de servicios debe habilitar medios e instrumentos para efectuar consultas y reclamaciones.</leyenda>
-<usuario>wsServices</usuario>
-<codigoDocumentoSector>1</codigoDocumentoSector>
-</cabecera>
-<detalle>
-<actividadEconomica>590000</actividadEconomica>
-<codigoProductoSin>96140</codigoProductoSin>
-<codigoProducto>CINE-200</codigoProducto>
-<descripcion>BON O BON 16gr</descripcion>
-<cantidad>1.00000</cantidad>
-<unidadMedida>58</unidadMedida>
-<precioUnitario>3.00000</precioUnitario>
-<montoDescuento xsi:nil="true"></montoDescuento>
-<subTotal>3.00000</subTotal>
-<numeroSerie xsi:nil="true"></numeroSerie>
-<numeroImei xsi:nil="true"></numeroImei>
-</detalle>
-<detalle>
-<actividadEconomica>590000</actividadEconomica>
-<codigoProductoSin>96140</codigoProductoSin>
-<codigoProducto>CINE-200</codigoProducto>
-<descripcion>PIPOCA MIXTA</descripcion>
-<cantidad>1.00000</cantidad>
-<unidadMedida>58</unidadMedida>
-<precioUnitario>27.00000</precioUnitario>
-<montoDescuento xsi:nil="true"></montoDescuento>
-<subTotal>27.00000</subTotal>
-<numeroSerie xsi:nil="true"></numeroSerie>
-<numeroImei xsi:nil="true"></numeroImei>
-</detalle>
-<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"></CanonicalizationMethod><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></Transform><Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments"></Transform></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod><DigestValue>N3B6TL5p4+OO5hQTtjVrcJg1UMucC1K9nEyWvIKLfFw=</DigestValue></Reference></SignedInfo><SignatureValue>Om18I0wz3l2gcNAR6m5f+Y68Ivxkf5oq8DT0gsbD7UmOqaZM8AyJ32RekE7UN4xOiYduvWoklGmZprF+HoLdNMeGGsQ6fVzMJW80Qd5IuXhZiCewHrvMqWMX2NfUnbzI6HiNvF5ZWbrgI3OMgaA0rfnTWfllfpPLqaP0Uh6GyzreW99C8IGbVWyjaE0XeFAmNptTwH/JjYsXhr3lf6KUesOIuycSr52/g6w5PZBbZqj4nmCelL9nYBBnrarOqeKd8S++sives+hZJDEUPVQJRfRBzNuVaMkOalDHtDefBCWoRxoq4+tpLyFS2sF3eIXJulzuBNcz1DyAJMp/8XuiIQ==</SignatureValue><KeyInfo><X509Data><X509Certificate>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</X509Certificate></X509Data></KeyInfo></Signature></facturaElectronicaCompraVenta>
+<facturaElectronicaCompraVenta xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="facturaElectronicaCompraVenta">
+    <cabecera>
+        <nitEmisor>1014653025</nitEmisor>
+        <razonSocialEmisor>IMFAR SRL</razonSocialEmisor>
+        <municipio>Montero</municipio>
+        <telefono xsi:nil="true"></telefono>
+        <numeroFactura>1162</numeroFactura>
+        <cuf>456CE585F88370D30DACE17D3507B5121D859992440490814AAA8FD74</cuf>
+        <cufd>BQnlDMnVCQkE=Nkzc2RUIxQUMwMEY=Qj5eNU5BTEZYVUFQwQTYxQjFGNTEzQ</cufd>
+        <codigoSucursal>1</codigoSucursal>
+        <direccion>CALLE BALLIVIAN NRO. S/N, ZONA/BARRIO CENTRAL</direccion>
+        <codigoPuntoVenta xsi:nil="true"></codigoPuntoVenta>
+        <fechaEmision>2023-05-10T14:32:44.264</fechaEmision>
+        <nombreRazonSocial>CECILIA AGUILERA GARRIDO</nombreRazonSocial>
+        <codigoTipoDocumentoIdentidad>5</codigoTipoDocumentoIdentidad>
+        <numeroDocumento>5427890012</numeroDocumento>
+        <complemento></complemento>
+        <codigoCliente>CL-7881</codigoCliente>
+        <codigoMetodoPago>6</codigoMetodoPago>
+        <numeroTarjeta xsi:nil="true"></numeroTarjeta>
+        <montoTotal>1483.55</montoTotal>
+        <montoTotalSujetoIva>1483.55</montoTotalSujetoIva>
+        <codigoMoneda>1</codigoMoneda>
+        <tipoCambio>1.0</tipoCambio>
+        <montoTotalMoneda>1483.55</montoTotalMoneda>
+        <montoGiftCard>0.0</montoGiftCard>
+        <descuentoAdicional xsi:nil="true"></descuentoAdicional>
+        <codigoExcepcion>1</codigoExcepcion>
+        <cafc xsi:nil="true"></cafc>
+        <leyenda>Ley N° 453: El proveedor de servicios debe habilitar medios e instrumentos para efectuar consultas y reclamaciones.</leyenda>
+        <usuario>Psaravia</usuario>
+        <codigoDocumentoSector>1</codigoDocumentoSector>
+    </cabecera>
+    <detalle>
+        <actividadEconomica>464410</actividadEconomica>
+        <codigoProductoSin>99100</codigoProductoSin>
+        <codigoProducto>PT-01501</codigoProducto>
+        <descripcion>DERMAFAR CREMA X 35 GR</descripcion>
+        <cantidad>2.0</cantidad>
+        <unidadMedida>6</unidadMedida>
+        <precioUnitario>31</precioUnitario>
+        <montoDescuento xsi:nil="true"></montoDescuento>
+        <subTotal>62</subTotal>
+        <numeroSerie xsi:nil="true"></numeroSerie>
+        <numeroImei xsi:nil="true"></numeroImei>
+    </detalle>
+    <detalle>
+        <actividadEconomica>464410</actividadEconomica>
+        <codigoProductoSin>99100</codigoProductoSin>
+        <codigoProducto>PT-01146</codigoProducto>
+        <descripcion>PENBRONK 20 MG X 20 COMP.</descripcion>
+        <cantidad>1.0</cantidad>
+        <unidadMedida>6</unidadMedida>
+        <precioUnitario>50</precioUnitario>
+        <montoDescuento xsi:nil="true"></montoDescuento>
+        <subTotal>50</subTotal>
+        <numeroSerie xsi:nil="true"></numeroSerie>
+        <numeroImei xsi:nil="true"></numeroImei>
+    </detalle>
+    <detalle>
+        <actividadEconomica>464410</actividadEconomica>
+        <codigoProductoSin>99100</codigoProductoSin>
+        <codigoProducto>PT-01118</codigoProducto>
+        <descripcion>AZIMUT 500 MG COMPRIMIDOS REVESTIDOS X 6</descripcion>
+        <cantidad>3.0</cantidad>
+        <unidadMedida>6</unidadMedida>
+        <precioUnitario>60</precioUnitario>
+        <montoDescuento xsi:nil="true"></montoDescuento>
+        <subTotal>180</subTotal>
+        <numeroSerie xsi:nil="true"></numeroSerie>
+        <numeroImei xsi:nil="true"></numeroImei>
+    </detalle>
+    <detalle>
+        <actividadEconomica>464410</actividadEconomica>
+        <codigoProductoSin>99100</codigoProductoSin>
+        <codigoProducto>PT-01189</codigoProducto>
+        <descripcion>BANES 600 LP COMPR. REVEST. X 10</descripcion>
+        <cantidad>10.0</cantidad>
+        <unidadMedida>6</unidadMedida>
+        <precioUnitario>19</precioUnitario>
+        <montoDescuento xsi:nil="true"></montoDescuento>
+        <subTotal>190</subTotal>
+        <numeroSerie xsi:nil="true"></numeroSerie>
+        <numeroImei xsi:nil="true"></numeroImei>
+    </detalle>
+    <detalle>
+        <actividadEconomica>464410</actividadEconomica>
+        <codigoProductoSin>99100</codigoProductoSin>
+        <codigoProducto>PT-01128</codigoProducto>
+        <descripcion>CIMAFIX X10 COMP.(CEFIXIMA 400MG)</descripcion>
+        <cantidad>2.0</cantidad>
+        <unidadMedida>6</unidadMedida>
+        <precioUnitario>165</precioUnitario>
+        <montoDescuento>66</montoDescuento>
+        <subTotal>264</subTotal>
+        <numeroSerie xsi:nil="true"></numeroSerie>
+        <numeroImei xsi:nil="true"></numeroImei>
+    </detalle>
+    <detalle>
+        <actividadEconomica>464410</actividadEconomica>
+        <codigoProductoSin>99100</codigoProductoSin>
+        <codigoProducto>PT-01173</codigoProducto>
+        <descripcion>ACCORD-H COMPRIM. REVEST. X 30</descripcion>
+        <cantidad>1.0</cantidad>
+        <unidadMedida>6</unidadMedida>
+        <precioUnitario>159.5</precioUnitario>
+        <montoDescuento>15.95</montoDescuento>
+        <subTotal>143.55</subTotal>
+        <numeroSerie xsi:nil="true"></numeroSerie>
+        <numeroImei xsi:nil="true"></numeroImei>
+    </detalle>
+    <detalle>
+        <actividadEconomica>464410</actividadEconomica>
+        <codigoProductoSin>99100</codigoProductoSin>
+        <codigoProducto>PT-01176</codigoProducto>
+        <descripcion>ROXICAM 20 MG COMPR. REV. X 30</descripcion>
+        <cantidad>2.0</cantidad>
+        <unidadMedida>6</unidadMedida>
+        <precioUnitario>330</precioUnitario>
+        <montoDescuento>66</montoDescuento>
+        <subTotal>594</subTotal>
+        <numeroSerie xsi:nil="true"></numeroSerie>
+        <numeroImei xsi:nil="true"></numeroImei>
+    </detalle>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+<SignedInfo>
+<CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"></CanonicalizationMethod>
+<SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
+<Reference URI="">
+<Transforms>
+<Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></Transform>
+<Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments"></Transform>
+</Transforms>
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>NEEE8L5PBMGrm+czqOR2+Vxo98msTExNIcSKNCYtuQo=</DigestValue>
+</Reference>
+</SignedInfo>
+<SignatureValue>
+LH5KGc2Tk4zyw7zhB+H6ysE4Xx7PoWyd2CbyY4pN3GKxkYihE+SobAQO+jRpkWVnkejMc3ZSUBbL
+nsg6RDjU1USGHFBoNNb9mwoYXdv2lIv2hKu0dy+6FWrzJS42HGfF5Kef1AXIBzDSN6zuHmo5rM/z
+yIWKgtdnciP+BgICU313F56Dhxh9IFDjehCc5pVE3EETWxfExrdD+z/s4ysOAmO1ytBs0nKOa3Jb
+wtN5XUoGFzqIhphBdX8Df8Nc2lz6eTi4EhRNAzKiTlpu75zWIUkFdIiA2kq38mlhNNgF7SvGZlc4
+qq2nWqFKKM9i+jvbs/WzVzNIlLYOBKT8fPL6hg==
+</SignatureValue>
+<KeyInfo>
+<X509Data>
+<X509Certificate>
+MIIGfjCCBGagAwIBAgIId+n0RFCmbr8wDQYJKoZIhvcNAQELBQAwVDEyMDAGA1UEAwwpRW50aWRh
+ZCBDZXJ0aWZpY2Fkb3JhIEF1dG9yaXphZGEgRGlnaWNlcnQxETAPBgNVBAoMCERpZ2ljZXJ0MQsw
+CQYDVQQGEwJCTzAeFw0yMzAzMTUxODI2MDBaFw0yNDAzMTQxODI2MDBaMIG1MQ8wDQYDVQQNDAZO
+T1JNQUwxCzAJBgNVBC4TAkNFMSgwJgYDVQQDDB9PUkxBTkRPIFVMSVNFUyBBUVVJTk8gU0FOVEFD
+UlVaMRMwEQYDVQQFEwoxMDE0NjUzMDI1MR8wHQYDVQQMDBZHRVJFTlRFIEFETUlOSVNUUkFUSVZP
+MRIwEAYDVQQKDAlJTUZBUiBTUkwxCzAJBgNVBAYTAkJPMRQwEgYHKwYBAQEBAAwHMDAyNzIxMjCC
+ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKyf1UCUuxD2vTiMeBP2ZImdRlWsfYZLaNYH
+TdSbgvHzQ9WIOnMSMZuJVJQul9JbPkeHRKAO91gewJgKG+033T+vnEfd8D7sHmXwCC2ITcQHKfDB
+MCpWWOniA2x1x8txZafI+PQZuHadrA9tqIm5uQKDHh+GH3z7zmUwRopgb1IY7xSHLIgAaMuttrNV
+aCoKOrUH0JgraYn7POxi7P3QbhxrOhSgdZ4RMzdzD+fDY3vokkxjSykGuiDfZlnsa5Ckf7ah1Va4
+g4aSteOVCmPpLHy3Nkel2C5LiCf+jAIC7sNufeMgE4zRxbWUqWYPxbT7mqbvCvjExRueLmIUTNfS
+0VECAwEAAaOCAfAwggHsMAkGA1UdEwQCMAAwHwYDVR0jBBgwFoAUebY6dC/WMrheEFsTwBjHoNx5
+Lt0waQYIKwYBBQUHAQEEXTBbMC8GCCsGAQUFBzAChiNodHRwOi8vd3d3LmRpZ2ljZXJ0LmJvL2Rp
+Z2ljZXJ0LnBlbTAoBggrBgEFBQcwAYYcaHR0cDovL3d3dy5kaWdpY2VydC5iby9vY3NwLzAfBgNV
+HREEGDAWgRRvYXF1aW5vQGltZmFyLmNvbS5ibzBSBgNVHSAESzBJMEcGD2BEAAAAAQ4BAgACAgAA
+ADA0MDIGCCsGAQUFBwIBFiZodHRwOi8vd3d3LmRpZ2ljZXJ0LmJvL2VjcGRpZ2ljZXJ0LnBkZjAn
+BgNVHSUEIDAeBggrBgEFBQcDAgYIKwYBBQUHAwMGCCsGAQUFBwMEMIGFBgNVHR8EfjB8MHqgHqAc
+hhpodHRwOi8vd3d3LmRpZ2ljZXJ0LmJvL2NybKJYpFYwVDEyMDAGA1UEAwwpRW50aWRhZCBDZXJ0
+aWZpY2Fkb3JhIEF1dG9yaXphZGEgRGlnaWNlcnQxETAPBgNVBAoMCERpZ2ljZXJ0MQswCQYDVQQG
+EwJCTzAdBgNVHQ4EFgQU+yAfqDspGuEpF4u8zSmAryf2yHowDgYDVR0PAQH/BAQDAgTwMA0GCSqG
+SIb3DQEBCwUAA4ICAQAOQXW5b+CBLUUItVYCLL6AitJgoOi/lGoG3G2lgHiwTU+dngzC+dEV1/at
+w8/DDVxOimd8WEITOsEWUxaaKFPaOgdJ2nSv/rL7UjGEdsHrai/N4eV9AhOQyKiFPTc0Jg7K3V4f
+dmjd15XS1glEPx+np5/KlkUv+zSHJQZnSG21j6xGV/QLqB780g+YnnNRsWiqGvQnxTUTKkaQ3AIq
+Ft+OFe35Ag8QLMxmZGmBErXy8tX84CiVmnNksbijJuhgTB4fPhSAxXGeVLgc2GG/LuZGQLP0HCtJ
+I41PgdKeHU1eZnTEATakwafQZXDZQoUIrtQP+YxwTn1Zo9/9Y1aUs/es5mvBY9bA3LehlGbY9QDP
+NyHrX8yXmz+/bwozgNNvYrM9Xt68XF9lgmcMzJklPHdlJ7qSpf1ih8FS9lF082zoO+i1bbzESl0/
+eocpImE5biz7WTUgjBMzcEM7PTK73DhuanSS6msOhTASW6SrmZjFSZaoD2BlPW89NbKMLp8J6HJQ
+2jSvzzM3PdrMyBWeD4i3o5m0rLczh9CQ/5+6EgbjokAYf3Of8dqcuuZ0Iqb04iiRrb1jgBl/he0A
+2vN+XqpK2ciVaymsxPAbnONinlPRLyos9QqImWM/ZrqBnzrajSVwiLO1naQsB3gh9cL3RuILbvgw
+hCYS06OCUFODGSzaKQ==
+</X509Certificate>
+</X509Data>
+</KeyInfo>
+</Signature></facturaElectronicaCompraVenta>

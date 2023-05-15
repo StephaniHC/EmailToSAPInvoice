@@ -1,13 +1,10 @@
 ﻿using EmailToSAPInvoice.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Tls;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
+using System.Net.Http; 
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,12 +15,10 @@ namespace EmailToSAPInvoice.Service
     {
         private HttpClientHandler handler;
         private HttpClient client;
-        private SapConfiguration config;
-
+        private SapConfiguration config; 
         public SAPServiceLayerConnection()
         {
-            LoadConfiguration();
-
+            LoadConfiguration(); 
             if (!config.Certificate)
             {
                 handler = new HttpClientHandler()
@@ -49,7 +44,7 @@ namespace EmailToSAPInvoice.Service
                 .Get<SapConfiguration>();
         }
 
-        public async Task ConnectToSAP(List<FacturaElectronicaCompraVenta> listInvoiceXML)
+        public async Task ConnectToSAP(List<Factura.facturaElectronicaCompraVenta> listInvoiceXML)
         {
             if (client == null)
             {
@@ -64,10 +59,8 @@ namespace EmailToSAPInvoice.Service
                     Password = config.Password,
                     CompanyDB = config.CompanyDB
                 };
-
                 var content = new StringContent(JsonConvert.SerializeObject(loginInfo), Encoding.UTF8, "application/json");
                 var response = await client.PostAsync(config.Url + "Login", content, timeCancelation.Token);
-
                 if (response.IsSuccessStatusCode)
                 {
                     var session = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
@@ -76,28 +69,20 @@ namespace EmailToSAPInvoice.Service
                     Console.Write("se conecto" + session);
                     foreach (var invoice in listInvoiceXML)
                     {
-                        // Convertir la factura a un objeto anónimo con las propiedades que necesita la API de SAP
                         var sapInvoice = new
                         {
-                            //CardCode = invoice.CardCode,
-                            //DocDate = invoice.DocDate,
-                            //DocDueDate = invoice.DocDueDate, 
+                            CardCode = 52
                         };
-
-                        // Serializar el objeto de factura a JSON
                         var invoiceContent = new StringContent(JsonConvert.SerializeObject(sapInvoice), Encoding.UTF8, "application/json");
-
-                        // Hacer una solicitud POST a la API de facturas de SAP
                         var invoiceResponse = await client.PostAsync(config.Url + "Invoices", invoiceContent, timeCancelation.Token);
-
-                        /*if (invoiceResponse.IsSuccessStatusCode)
+                        if (invoiceResponse.IsSuccessStatusCode)
                         {
-                            Console.WriteLine($"Factura {invoice.DocEntry} insertada correctamente en SAP.");
+                            Console.WriteLine($"Factura insertada correctamente en SAP.");
                         }
                         else
                         {
-                            Console.WriteLine($"Error al insertar la factura {invoice.DocEntry} en SAP: {invoiceResponse.StatusCode}");
-                        }*/
+                            Console.WriteLine($"Error al insertar la factura en SAP: {invoiceResponse.StatusCode}");
+                        }
                     }
                 }
                 else

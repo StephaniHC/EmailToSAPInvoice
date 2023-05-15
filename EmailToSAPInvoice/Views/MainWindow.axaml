@@ -83,12 +83,7 @@
 				Command="{Binding DownloadXmlAttachmentsCommand}"
 				FontFamily="Segoe UI"
 				Margin="300,0,0,380"
-				Background="SkyBlue"/>
-		<Button Content="{Binding ButtonServer}"
-				Command="{Binding GoServerLayer}"
-				FontFamily="Segoe UI"
-				Margin="300,0,0,280"
-				Background="Brown"/>
+				Background="SkyBlue"/> 
 	</Grid>
 
 </Window>

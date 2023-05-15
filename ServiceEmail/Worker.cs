@@ -16,7 +16,7 @@ namespace ServiceEmail
         {
             _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
 
-            _timer = new Timer(OnTimerElapsed, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+            _timer = new Timer(OnTimerElapsed, null, TimeSpan.Zero, TimeSpan.FromMinutes(10));
 
             await Task.Delay(Timeout.Infinite, stoppingToken);
         }

@@ -19,5 +19,7 @@ namespace EmailToSAPInvoice.Service.Table
         [MaxLength(250)]
         public string Attached { get; set; }
         public string Status { get; set; } = StatusPending;
+
+        public string Observation { get; set; }  
     }
 }

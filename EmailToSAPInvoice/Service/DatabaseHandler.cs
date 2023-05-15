@@ -45,7 +45,8 @@ namespace EmailToSAPInvoice.Service
                 Date = date,
                 Subject = subject,
                 Attached = attached,
-                Status = "Pendiente"
+                Status = Datas.StatusPending,
+                Observation = ""
             };
             database.Insert(newDatas);
             return newDatas;
@@ -53,7 +54,13 @@ namespace EmailToSAPInvoice.Service
 
         public List<Datas> GetPendingEmails()
         {
-            return database.Query<Datas>("SELECT  Attached, Status FROM Datas WHERE Status='Pendiente'").ToList();
+            return database.Query<Datas>("SELECT Id, Attached, Status FROM Datas WHERE Status='Pendiente'").ToList();
+        }
+         
+        public void UpdateStatus(int id, string observation)
+        {
+            string newStatu = Datas.StatusError;
+            database.Execute("UPDATE Datas SET Status = ?, Observation = ? WHERE Id = ?", newStatu, observation, id);
         }
     }
 }
