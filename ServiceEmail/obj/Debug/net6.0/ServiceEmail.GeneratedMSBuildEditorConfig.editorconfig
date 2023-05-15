@@ -13,4 +13,4 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = ServiceEmail
-build_property.ProjectDir = C:\Users\Aorus X3 V7\source\repos\Proyecto\EmailToSAPInvoice\ServiceEmail\
+build_property.ProjectDir = C:\Users\steph\source\EmailToSAPInvoice\ServiceEmail\

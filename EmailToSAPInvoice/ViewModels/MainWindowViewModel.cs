@@ -71,12 +71,7 @@ namespace EmailToSAPInvoice.ViewModels
             ////sapService = new SAPServiceLayerConnection();
             ///sapService.ConnectToSAP().GetAwaiter().GetResult();
         }
-
-        public void GetConnection()
-        {
-            sapService = new SAPServiceLayerConnection();
-            sapService.ConnectToSAP().GetAwaiter().GetResult();  
-        }
+         
         private void GetRutas()
         {
             var directory = "Ruta.json"; 
@@ -262,20 +257,23 @@ namespace EmailToSAPInvoice.ViewModels
                 if (File.Exists(filePath))
                 {
                     Console.Write("Lo encontro y es : " + filePath + " \n");
-                    XmlSerializer serializer = new XmlSerializer(typeof(facturaElectronicaCompraVenta));
+                    XmlSerializer serializer = new XmlSerializer(typeof(FacturaElectronicaCompraVenta));
                     StreamReader reader = new StreamReader(filePath);
                     Console.Write("lo leyo: " + reader + " \n");
-                    var factura = (facturaElectronicaCompraVenta)serializer.Deserialize(reader);
+                    var factura = (FacturaElectronicaCompraVenta)serializer.Deserialize(reader);
                     reader.Close(); 
                     Console.Write("\n guardo: " + factura);
                     //facturaList.Add(factura);
-                    //Console.Write("\n guardo a la lista: " + facturaList);
+                   // Console.Write("\n guardo a la lista: " + facturaList);
                 }
                 else
                 {
                     Console.Write($"Archivo: {attachmentName}, no encontrado en la carpeta");
                 }
             }
+            sapService = new SAPServiceLayerConnection();
+            sapService.ConnectToSAP(facturaList).GetAwaiter().GetResult();
+
         }
     }
 }

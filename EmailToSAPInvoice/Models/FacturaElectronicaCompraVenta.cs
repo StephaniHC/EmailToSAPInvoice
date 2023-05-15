@@ -5,16 +5,15 @@ using System.Xml.Serialization;
 
 namespace EmailToSAPInvoice.Models
 {
-    [Serializable, XmlRoot(Namespace = "http://el.espacio.de.nombres.correcto/")]
     public class FacturaElectronicaCompraVenta
     {
 
-        // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
+        // NOTA: El código generado puede requerir, como mínimo, .NET Framework 4.5 o .NET Core/Standard 2.0.
         /// <remarks/>
         [System.SerializableAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-        [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://el.espacio.de.nombres.correcto/", IsNullable = false, ElementName = "facturaElectronicaCompraVenta")]
+        [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.w3.org/2001/XMLSchema-instance", IsNullable = false)]
         public partial class facturaElectronicaCompraVenta
         {
 
