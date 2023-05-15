@@ -18,6 +18,7 @@ using ReactiveUI;
 using EmailToSAPInvoice.Views;
 using System.Configuration;
 using Microsoft.Extensions.Configuration;
+using System.Xml.Serialization;
 
 namespace EmailToSAPInvoice.ViewModels
 {
@@ -50,7 +51,8 @@ namespace EmailToSAPInvoice.ViewModels
             }
         }
 
-        private SAPServiceLayerConnection sapService; 
+        private SAPServiceLayerConnection sapService;
+        private List<FacturaElectronicaCompraVenta> facturaList;
         public MainWindowViewModel()
         {
             GoToSecondWindow = ReactiveCommand.Create(() =>
@@ -64,7 +66,8 @@ namespace EmailToSAPInvoice.ViewModels
             Rutas = new Route();
             databaseHandler = new DatabaseHandler();
             ResultE = new ObservableCollection<EmailResult>();
-            GetData();
+            GetData(); 
+            facturaList = new List<FacturaElectronicaCompraVenta>();
             ////sapService = new SAPServiceLayerConnection();
             ///sapService.ConnectToSAP().GetAwaiter().GetResult();
         }
@@ -223,7 +226,7 @@ namespace EmailToSAPInvoice.ViewModels
             }
         }   
          
-        public void GetDataInvoice()
+        public void GetDataInvoice1()
         { 
             var datas = databaseHandler.GetPendingEmails();
             string xmlFolderPath = Path.Combine(rutaDownload, "descargaXML"); 
@@ -240,6 +243,33 @@ namespace EmailToSAPInvoice.ViewModels
                     {
                         string nitEmisor = nitEmisorNode.InnerText; 
                     }
+                }
+                else
+                {
+                    Console.Write($"Archivo: {attachmentName}, no encontrado en la carpeta");
+                }
+            }
+        } 
+
+        public void GetDataInvoice()
+        {
+            var datas = databaseHandler.GetPendingEmails();
+            string xmlFolderPath = Path.Combine(rutaDownload, "descargaXML");
+            foreach (Datas email in datas)
+            {
+                string attachmentName = email.Attached;
+                string filePath = Path.Combine(xmlFolderPath, attachmentName);
+                if (File.Exists(filePath))
+                {
+                    Console.Write("Lo encontro y es : " + filePath + " \n");
+                    XmlSerializer serializer = new XmlSerializer(typeof(facturaElectronicaCompraVenta));
+                    StreamReader reader = new StreamReader(filePath);
+                    Console.Write("lo leyo: " + reader + " \n");
+                    var factura = (facturaElectronicaCompraVenta)serializer.Deserialize(reader);
+                    reader.Close(); 
+                    Console.Write("\n guardo: " + factura);
+                    //facturaList.Add(factura);
+                    //Console.Write("\n guardo a la lista: " + facturaList);
                 }
                 else
                 {
