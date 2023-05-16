@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace EmailToSAPInvoice.Models
 {
-    internal class Class1
+    public class FacturaCompraVenta
     {
-
         // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
         /// <remarks/>
         [System.SerializableAttribute()]
@@ -17,6 +17,7 @@ namespace EmailToSAPInvoice.Models
         [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
         public partial class facturaElectronicaCompraVenta
         {
+            public object identifier { get; set; }
 
             private facturaElectronicaCompraVentaCabecera cabeceraField;
 
@@ -72,16 +73,15 @@ namespace EmailToSAPInvoice.Models
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
         public partial class facturaElectronicaCompraVentaCabecera
         {
-
-            private uint nitEmisorField;
+            private UInt32 nitEmisorField;
 
             private string razonSocialEmisorField;
 
             private string municipioField;
 
-            private uint telefonoField;
+            private object telefonoField;
 
-            private uint numeroFacturaField;
+            private UInt32 numeroFacturaField;
 
             private string cufField;
 
@@ -91,7 +91,7 @@ namespace EmailToSAPInvoice.Models
 
             private string direccionField;
 
-            private byte codigoPuntoVentaField;
+            private object codigoPuntoVentaField;
 
             private System.DateTime fechaEmisionField;
 
@@ -99,11 +99,11 @@ namespace EmailToSAPInvoice.Models
 
             private byte codigoTipoDocumentoIdentidadField;
 
-            private uint numeroDocumentoField;
+            private ulong numeroDocumentoField;
 
             private object complementoField;
 
-            private uint codigoClienteField;
+            private string codigoClienteField;
 
             private byte codigoMetodoPagoField;
 
@@ -121,7 +121,7 @@ namespace EmailToSAPInvoice.Models
 
             private object montoGiftCardField;
 
-            private decimal descuentoAdicionalField;
+            private object descuentoAdicionalField;
 
             private byte codigoExcepcionField;
 
@@ -134,7 +134,7 @@ namespace EmailToSAPInvoice.Models
             private byte codigoDocumentoSectorField;
 
             /// <remarks/>
-            public uint nitEmisor
+            public UInt32 nitEmisor
             {
                 get
                 {
@@ -173,7 +173,8 @@ namespace EmailToSAPInvoice.Models
             }
 
             /// <remarks/>
-            public uint telefono
+            [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
+            public object telefono
             {
                 get
                 {
@@ -186,7 +187,7 @@ namespace EmailToSAPInvoice.Models
             }
 
             /// <remarks/>
-            public uint numeroFactura
+            public UInt32 numeroFactura
             {
                 get
                 {
@@ -251,7 +252,8 @@ namespace EmailToSAPInvoice.Models
             }
 
             /// <remarks/>
-            public byte codigoPuntoVenta
+            [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
+            public object codigoPuntoVenta
             {
                 get
                 {
@@ -303,7 +305,7 @@ namespace EmailToSAPInvoice.Models
             }
 
             /// <remarks/>
-            public uint numeroDocumento
+            public ulong numeroDocumento
             {
                 get
                 {
@@ -316,7 +318,6 @@ namespace EmailToSAPInvoice.Models
             }
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
             public object complemento
             {
                 get
@@ -330,7 +331,7 @@ namespace EmailToSAPInvoice.Models
             }
 
             /// <remarks/>
-            public uint codigoCliente
+            public string codigoCliente
             {
                 get
                 {
@@ -435,7 +436,6 @@ namespace EmailToSAPInvoice.Models
             }
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
             public object montoGiftCard
             {
                 get
@@ -449,7 +449,8 @@ namespace EmailToSAPInvoice.Models
             }
 
             /// <remarks/>
-            public decimal descuentoAdicional
+            [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
+            public object descuentoAdicional
             {
                 get
                 {
@@ -534,10 +535,9 @@ namespace EmailToSAPInvoice.Models
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
         public partial class facturaElectronicaCompraVentaDetalle
         {
+            private UInt32 actividadEconomicaField;
 
-            private uint actividadEconomicaField;
-
-            private uint codigoProductoSinField;
+            private UInt32 codigoProductoSinField;
 
             private string codigoProductoField;
 
@@ -549,7 +549,7 @@ namespace EmailToSAPInvoice.Models
 
             private decimal precioUnitarioField;
 
-            private object montoDescuentoField;
+            private string montoDescuentoField;
 
             private decimal subTotalField;
 
@@ -558,7 +558,7 @@ namespace EmailToSAPInvoice.Models
             private object numeroImeiField;
 
             /// <remarks/>
-            public uint actividadEconomica
+            public UInt32 actividadEconomica
             {
                 get
                 {
@@ -571,7 +571,7 @@ namespace EmailToSAPInvoice.Models
             }
 
             /// <remarks/>
-            public uint codigoProductoSin
+            public UInt32 codigoProductoSin
             {
                 get
                 {
@@ -650,7 +650,7 @@ namespace EmailToSAPInvoice.Models
 
             /// <remarks/>
             [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
-            public object montoDescuento
+            public string montoDescuento
             {
                 get
                 {
@@ -711,7 +711,6 @@ namespace EmailToSAPInvoice.Models
         [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.w3.org/2000/09/xmldsig#", IsNullable = false)]
         public partial class Signature
         {
-
             private SignatureSignedInfo signedInfoField;
 
             private string signatureValueField;
@@ -764,7 +763,6 @@ namespace EmailToSAPInvoice.Models
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.w3.org/2000/09/xmldsig#")]
         public partial class SignatureSignedInfo
         {
-
             private SignatureSignedInfoCanonicalizationMethod canonicalizationMethodField;
 
             private SignatureSignedInfoSignatureMethod signatureMethodField;
@@ -817,7 +815,6 @@ namespace EmailToSAPInvoice.Models
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.w3.org/2000/09/xmldsig#")]
         public partial class SignatureSignedInfoCanonicalizationMethod
         {
-
             private string algorithmField;
 
             /// <remarks/>
@@ -841,7 +838,6 @@ namespace EmailToSAPInvoice.Models
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.w3.org/2000/09/xmldsig#")]
         public partial class SignatureSignedInfoSignatureMethod
         {
-
             private string algorithmField;
 
             /// <remarks/>
@@ -865,7 +861,6 @@ namespace EmailToSAPInvoice.Models
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.w3.org/2000/09/xmldsig#")]
         public partial class SignatureSignedInfoReference
         {
-
             private SignatureSignedInfoReferenceTransform[] transformsField;
 
             private SignatureSignedInfoReferenceDigestMethod digestMethodField;
@@ -935,7 +930,6 @@ namespace EmailToSAPInvoice.Models
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.w3.org/2000/09/xmldsig#")]
         public partial class SignatureSignedInfoReferenceTransform
         {
-
             private string algorithmField;
 
             /// <remarks/>
@@ -959,7 +953,6 @@ namespace EmailToSAPInvoice.Models
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.w3.org/2000/09/xmldsig#")]
         public partial class SignatureSignedInfoReferenceDigestMethod
         {
-
             private string algorithmField;
 
             /// <remarks/>
@@ -983,7 +976,6 @@ namespace EmailToSAPInvoice.Models
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.w3.org/2000/09/xmldsig#")]
         public partial class SignatureKeyInfo
         {
-
             private SignatureKeyInfoX509Data x509DataField;
 
             /// <remarks/>
@@ -1006,7 +998,6 @@ namespace EmailToSAPInvoice.Models
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.w3.org/2000/09/xmldsig#")]
         public partial class SignatureKeyInfoX509Data
         {
-
             private string x509CertificateField;
 
             /// <remarks/>
@@ -1022,7 +1013,5 @@ namespace EmailToSAPInvoice.Models
                 }
             }
         }
-
-
     }
 }

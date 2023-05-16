@@ -1,6 +1,9 @@
 ﻿using EmailToSAPInvoice.Models;
+using EmailToSAPInvoice.Service.Table;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,7 +19,8 @@ namespace EmailToSAPInvoice.Service
     {
         private HttpClientHandler handler;
         private HttpClient client;
-        private SapConfiguration config; 
+        private SapConfiguration config;  
+        private DatabaseHandler databaseHandler = new DatabaseHandler();
         public SAPServiceLayerConnection()
         {
             LoadConfiguration(); 
@@ -45,7 +49,9 @@ namespace EmailToSAPInvoice.Service
                 .Get<SapConfiguration>();
         }
 
-        public async Task ConnectToSAP(List<Factura.facturaElectronicaCompraVenta> listInvoiceXML)
+        public async Task ConnectToSAP(List<FacturaCompraVenta.facturaElectronicaCompraVenta> listInvoiceXML,
+                                       List<FacturaServicioBasico.facturaElectronicaServicioBasico> listServiceBasicXML, 
+                                       List<FacturaServicioTuristicoHospedaje.facturaElectronicaServicioTuristicoHospedaje> listServiceTouristXML)
         {
             if (client == null)
             {
@@ -70,27 +76,34 @@ namespace EmailToSAPInvoice.Service
                     Console.Write("se conecto" + session);
                     // Insertar factura
                     foreach (var factura in listInvoiceXML)
-                    {
-                        Console.Write("IIngeso a la insercion");
+                    { 
                         var invoiceJson = new
                         {
                             CardCode = factura.cabecera.nitEmisor,
-                            DocumentLines = factura.detalle?.Select(d => d == null ? null : new
+                            DocDate = (factura.cabecera.fechaEmision).ToString("yyyy-MM-dd"),
+                        //DocDate = DateTime.Parse(factura.cabecera.fechaEmision).ToString("yyyy-MM-dd"),
+                        DocumentLines = factura.detalle?.Select(d => d == null ? null : new
                             {
                                 ItemCode = d.codigoProducto,
                                 Quantity = d.cantidad,
                                 TaxCode = "IVA",
                                 UnitPrice = d.precioUnitario
                             }).ToList()
-                        }; 
+                        };
+
                         string jsonContent = JsonConvert.SerializeObject(invoiceJson);
                         HttpContent contentInvoice = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                        var insertResponse = await client.PostAsync(config.Url + "Invoices", contentInvoice);  
-                        if (!insertResponse.IsSuccessStatusCode)
+                        var insertResponse = await client.PostAsync(config.Url + "Invoices", contentInvoice);
+                        if (insertResponse.IsSuccessStatusCode)
                         {
+                            databaseHandler.UpdateStatus(factura.identifier, Datas.StatusProcessed, " ");
+                        }
+                        else
+                        {
+                            databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, $"{insertResponse.StatusCode}");
                             Console.WriteLine($"Error al insertar factura: {insertResponse.StatusCode}");
                         }
-                    } 
+                    }  
                 }
                 else
                 {
@@ -105,7 +118,8 @@ namespace EmailToSAPInvoice.Service
             {
                 Console.WriteLine($"Excepción al conectar a SAP: {e.Message}");
             }
-        }
+        } 
+
 
         public void Dispose()
         {

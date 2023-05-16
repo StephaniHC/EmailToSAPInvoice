@@ -57,10 +57,9 @@ namespace EmailToSAPInvoice.Service
             return database.Query<Datas>("SELECT Id, Attached, Status FROM Datas WHERE Status='Pendiente'").ToList();
         }
          
-        public void UpdateStatus(int id, string observation)
+        public void UpdateStatus(object id, string status,string observation)
         {
-            string newStatu = Datas.StatusError;
-            database.Execute("UPDATE Datas SET Status = ?, Observation = ? WHERE Id = ?", newStatu, observation, id);
+            database.Execute("UPDATE Datas SET Status = ?, Observation = ? WHERE Id = ?", status, observation, id);
         }
     }
 }

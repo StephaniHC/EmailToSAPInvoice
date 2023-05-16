@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<facturaElectronicaServicioTuristicoHospedaje xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="facturaElectronicaServicioTuristicoHospedaje.xsd">
+   <cabecera>
+      <nitEmisor>4933001012</nitEmisor>
+	  <razonSocialEmisor>PRUEBA</razonSocialEmisor>
+	  <municipio>LA PAZ - BOLIVIA</municipio>
+	  <telefono>22276489</telefono>	 
+      <numeroFactura>111</numeroFactura>
+      <cuf>a812312f1223892b</cuf>    
+      <cufd>4c4a63478ac61191d54b9c3774aa7ea1</cufd>
+      <codigoSucursal>0</codigoSucursal>
+      <direccion>Avenida siempre viva Nro. 100</direccion>
+      <codigoPuntoVenta xsi:nil="true" />
+      <fechaEmision>2012-12-13T12:12:12.125</fechaEmision>
+      <nombreRazonSocial>S/N</nombreRazonSocial>
+      <codigoTipoDocumentoIdentidad>5</codigoTipoDocumentoIdentidad>
+      <numeroDocumento>4933001012</numeroDocumento>
+      <complemento xsi:nil="true" />
+	  <codigoCliente>JDFP</codigoCliente>
+	  <razonSocialOperadorTurismo>KOLLA TOURS</razonSocialOperadorTurismo>
+      <cantidadHuespedes>3</cantidadHuespedes>
+      <cantidadHabitaciones>1</cantidadHabitaciones>
+      <cantidadMayores>1</cantidadMayores>
+      <cantidadMenores>2</cantidadMenores>
+      <fechaIngresoHospedaje>2012-12-13T12:12:12.125</fechaIngresoHospedaje>
+      <codigoMetodoPago>2</codigoMetodoPago>
+      <numeroTarjeta>4846000000006814</numeroTarjeta>
+      <montoTotal>123.45</montoTotal>
+      <codigoMoneda>1</codigoMoneda>
+      <tipoCambio>1.00</tipoCambio>
+      <montoTotalMoneda>123.45</montoTotalMoneda>
+      <leyenda>Ley N° 453: Los servicios deben suministrarse en condiciones de inocuidad, calidad y seguridad</leyenda>
+      <usuario>GJOFRE</usuario>
+      <codigoDocumentoSector>6</codigoDocumentoSector>
+    </cabecera>
+   <detalle>
+      <actividadEconomica>1076</actividadEconomica>
+      <codigoProductoSin>1921000</codigoProductoSin>
+      <codigoProducto>1</codigoProducto>
+      <descripcion>Hostal El Sueño Más Reparador</descripcion>
+      <codigoTipoHabitacion>12</codigoTipoHabitacion>
+      <cantidad>1</cantidad>	  
+	  <unidadMedida>1</unidadMedida>      
+      <precioUnitario>123.45</precioUnitario>
+      <montoDescuento xsi:nil="true" />
+      <subTotal>123.45</subTotal>
+	  <detalleHuespedes>[{"nombreHuesped":"Juan Perez","documentoIdentificacion":"44864646","codigoPais":"1"}]</detalleHuespedes>
+   </detalle>
+    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+<SignedInfo>
+<CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"></CanonicalizationMethod>
+<SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
+<Reference URI="">
+<Transforms>
+<Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></Transform>
+<Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments"></Transform>
+</Transforms>
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue></DigestValue>
+</Reference>
+</SignedInfo>
+<SignatureValue></SignatureValue>
+<KeyInfo>
+<X509Data>
+<X509Certificate></X509Certificate>
+<X509SubjectName></X509SubjectName>
+<X509IssuerSerial>
+<X509IssuerName>1</X509IssuerName>
+<X509SerialNumber>1</X509SerialNumber>
+</X509IssuerSerial>
+</X509Data>
+</KeyInfo>
+</Signature>
+</facturaElectronicaServicioTuristicoHospedaje>

@@ -51,7 +51,9 @@ namespace EmailToSAPInvoice.ViewModels
         }
 
         private SAPServiceLayerConnection sapService;
-        private List<Factura.facturaElectronicaCompraVenta> facturaList;
+        private List<FacturaCompraVenta.facturaElectronicaCompraVenta> facturaList;
+        private List<FacturaServicioBasico.facturaElectronicaServicioBasico> facturaServiceList;
+        private List<FacturaServicioTuristicoHospedaje.facturaElectronicaServicioTuristicoHospedaje> facturaServiceTouristList;
         public MainWindowViewModel()
         {
             GoToSecondWindow = ReactiveCommand.Create(() =>
@@ -66,9 +68,9 @@ namespace EmailToSAPInvoice.ViewModels
             databaseHandler = new DatabaseHandler();
             ResultE = new ObservableCollection<EmailResult>();
             GetData(); 
-            facturaList = new List<Factura.facturaElectronicaCompraVenta>();
-            ////sapService = new SAPServiceLayerConnection();
-            ///sapService.ConnectToSAP().GetAwaiter().GetResult();
+            facturaList = new List<FacturaCompraVenta.facturaElectronicaCompraVenta>();
+            facturaServiceList = new List<FacturaServicioBasico.facturaElectronicaServicioBasico>();
+            facturaServiceTouristList = new List<FacturaServicioTuristicoHospedaje.facturaElectronicaServicioTuristicoHospedaje>();
         }
          
         private void GetRutas()
@@ -219,48 +221,40 @@ namespace EmailToSAPInvoice.ViewModels
                 return;
             }
         }   
-         
-        public void GetDataInvoice1()
-        { 
-            var datas = databaseHandler.GetPendingEmails();
-            string xmlFolderPath = Path.Combine(rutaDownload, "descargaXML"); 
-            foreach (Datas email in datas)
-            {
-                string attachmentName = email.Attached;
-                string filePath = Path.Combine(xmlFolderPath, attachmentName);  
-                if (File.Exists(filePath))
-                {
-                    XmlDocument xmlDoc = new XmlDocument();
-                    xmlDoc.Load(filePath);
-                    XmlNode nitEmisorNode = xmlDoc.SelectSingleNode("//nitEmisor"); 
-                    if (nitEmisorNode != null)
-                    {
-                        string nitEmisor = nitEmisorNode.InnerText; 
-                    }
-                }
-                else
-                {
-                    Console.Write($"Archivo: {attachmentName}, no encontrado en la carpeta");
-                }
-            }
-        }
-
-        public Factura.facturaElectronicaCompraVenta ReadFile(string archivo)
+        public object ReadFile(string archivo)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(Factura.facturaElectronicaCompraVenta));
+            XmlDocument doc = new XmlDocument();
+            doc.Load(archivo);
+            string rootElementName = doc.DocumentElement.Name; 
+            XmlSerializer serializer;
+            if (rootElementName == "facturaElectronicaCompraVenta")
+            { 
+                serializer = new XmlSerializer(typeof(FacturaCompraVenta.facturaElectronicaCompraVenta)); 
+            }
+            else if (rootElementName == "facturaElectronicaServicioBasico")
+            { 
+                serializer = new XmlSerializer(typeof(FacturaServicioBasico.facturaElectronicaServicioBasico)); 
+            }
+            else if (rootElementName == "facturaElectronicaServicioTuristicoHospedaje")
+            { 
+                serializer = new XmlSerializer(typeof(FacturaServicioTuristicoHospedaje.facturaElectronicaServicioTuristicoHospedaje)); 
+            }
+            else
+            { 
+                return null;
+            }
             try
             {
                 using (StreamReader reader = new StreamReader(archivo))
-                {
-                    return (Factura.facturaElectronicaCompraVenta)serializer.Deserialize(reader);
+                { 
+                    return serializer.Deserialize(reader);
                 }
             }
             catch (InvalidOperationException)
             {
-                Console.Write("No cumple con la estructura");
                 return null;
             }
-        }
+        } 
 
         public void GetDataInvoice()
         { 
@@ -275,17 +269,37 @@ namespace EmailToSAPInvoice.ViewModels
                 { 
                     var factura = ReadFile(filePath);
                     if (factura != null)
-                    { 
-                        facturaList.Add(factura);
-                        Console.Write("\n guardo a la lista: " + facturaList + "\n "); 
+                    {
+                        if (factura is FacturaCompraVenta.facturaElectronicaCompraVenta)
+                        {
+                            var facturaCompraVenta = (FacturaCompraVenta.facturaElectronicaCompraVenta)factura;
+                            facturaCompraVenta.identifier = email.Id;
+                            facturaList.Add(facturaCompraVenta);
+                            Console.Write("\n guardo a la lista: " + facturaList + "\n ");
+
+                        }
+                        else if (factura is FacturaServicioBasico.facturaElectronicaServicioBasico)
+                        {
+                            var facturaServicioBasico = (FacturaServicioBasico.facturaElectronicaServicioBasico)factura;
+                            facturaServicioBasico.identifier = email.Id;
+                            facturaServiceList.Add(facturaServicioBasico);
+                            Console.Write("\n guardo a la lista: " + facturaServiceList + "\n ");
+                        }
+                        else if (factura is FacturaServicioTuristicoHospedaje.facturaElectronicaServicioTuristicoHospedaje)
+                        {
+                            var facturaServicioTuristicoHospedaje = (FacturaServicioTuristicoHospedaje.facturaElectronicaServicioTuristicoHospedaje)factura;
+                            facturaServicioTuristicoHospedaje.identifier = email.Id;
+                            facturaServiceTouristList.Add(facturaServicioTuristicoHospedaje);
+                            Console.Write("\n guardo a la lista: " + facturaServiceTouristList + "\n ");
+                        }
                     }
                     else
                     {
-                        databaseHandler.UpdateStatus(email.Id, "No cumple con la estructura de .XML");
+                        databaseHandler.UpdateStatus(email.Id,Datas.StatusError,"No cumple con la estructura de Facturacion.XML");
                     }
                 }
             }
-            sapService.ConnectToSAP(facturaList).GetAwaiter().GetResult();
+            sapService.ConnectToSAP(facturaList, facturaServiceList, facturaServiceTouristList).GetAwaiter().GetResult();
         }  
     }
 }
