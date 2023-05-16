@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http; 
 using System.Text;
 using System.Threading;
@@ -67,23 +68,29 @@ namespace EmailToSAPInvoice.Service
                     client.DefaultRequestHeaders.Add("B1S-CaseInsensitive", "true");
                     client.DefaultRequestHeaders.Add("Cookie", $"B1SESSION={session.SessionId}; ROUTEID={session.RouteId};");
                     Console.Write("se conecto" + session);
-                    foreach (var invoice in listInvoiceXML)
+                    // Insertar factura
+                    foreach (var factura in listInvoiceXML)
                     {
-                        var sapInvoice = new
+                        Console.Write("IIngeso a la insercion");
+                        var invoiceJson = new
                         {
-                            CardCode = 52
-                        };
-                        var invoiceContent = new StringContent(JsonConvert.SerializeObject(sapInvoice), Encoding.UTF8, "application/json");
-                        var invoiceResponse = await client.PostAsync(config.Url + "Invoices", invoiceContent, timeCancelation.Token);
-                        if (invoiceResponse.IsSuccessStatusCode)
+                            CardCode = factura.cabecera.nitEmisor,
+                            DocumentLines = factura.detalle?.Select(d => d == null ? null : new
+                            {
+                                ItemCode = d.codigoProducto,
+                                Quantity = d.cantidad,
+                                TaxCode = "IVA",
+                                UnitPrice = d.precioUnitario
+                            }).ToList()
+                        }; 
+                        string jsonContent = JsonConvert.SerializeObject(invoiceJson);
+                        HttpContent contentInvoice = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                        var insertResponse = await client.PostAsync(config.Url + "Invoices", contentInvoice);  
+                        if (!insertResponse.IsSuccessStatusCode)
                         {
-                            Console.WriteLine($"Factura insertada correctamente en SAP.");
+                            Console.WriteLine($"Error al insertar factura: {insertResponse.StatusCode}");
                         }
-                        else
-                        {
-                            Console.WriteLine($"Error al insertar la factura en SAP: {invoiceResponse.StatusCode}");
-                        }
-                    }
+                    } 
                 }
                 else
                 {
