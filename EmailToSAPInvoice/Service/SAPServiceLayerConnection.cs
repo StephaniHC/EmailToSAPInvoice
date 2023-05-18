@@ -6,12 +6,15 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http; 
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static EmailToSAPInvoice.Models.Imbox;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace EmailToSAPInvoice.Service
 {
@@ -19,11 +22,11 @@ namespace EmailToSAPInvoice.Service
     {
         private HttpClientHandler handler;
         private HttpClient client;
-        private SapConfiguration config;  
+        private SapConfiguration config;
         private DatabaseHandler databaseHandler = new DatabaseHandler();
         public SAPServiceLayerConnection()
         {
-            LoadConfiguration(); 
+            LoadConfiguration();
             if (!config.Certificate)
             {
                 handler = new HttpClientHandler()
@@ -49,14 +52,12 @@ namespace EmailToSAPInvoice.Service
                 .Get<SapConfiguration>();
         }
 
-        public async Task ConnectToSAP(List<FacturaCompraVentas.facturaElectronicaCompraVenta> listInvoiceXML,
-                                       List<FacturaServicioBasicos.facturaElectronicaServicioBasico> listServiceBasicXML, 
-                                       List<FacturaServicioTuristicoHospedajes.facturaElectronicaServicioTuristicoHospedaje> listServiceTouristXML)
+        public async Task ConnectToSAP(List<FacturaBase> listInvoiceXML)
         {
             if (client == null)
             {
                 throw new ObjectDisposedException(nameof(client), "El HttpClient ha sido eliminado");
-            } 
+            }
             var timeCancelation = new CancellationTokenSource(TimeSpan.FromMinutes(30));
             try
             {
@@ -73,22 +74,44 @@ namespace EmailToSAPInvoice.Service
                     var session = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
                     client.DefaultRequestHeaders.Add("B1S-CaseInsensitive", "true");
                     client.DefaultRequestHeaders.Add("Cookie", $"B1SESSION={session.SessionId}; ROUTEID={session.RouteId};");
-                    Console.Write("se conecto" + session); 
-
-                    switch (config.TypeService)
+                    Console.Write("se conecto" + session);
+                    //solo por prueba para insertar factura
+                    var currencyRateJson = new
+                    {
+                        Currency = "USD",
+                        Rate = "6.96",
+                        RateDate = "20230518"
+                    };
+                    string jsonContent1 = JsonConvert.SerializeObject(currencyRateJson);
+                    HttpContent contentCurrencyRate = new StringContent(jsonContent1, Encoding.UTF8, "application/json");
+                    var response1 = await client.PostAsync(config.Url + "SBOBobService_SetCurrencyRate", contentCurrencyRate, timeCancelation.Token);
+                    if (!response1.IsSuccessStatusCode)
+                    {
+                        var errorResponse = await response1.Content.ReadAsStringAsync();
+                        var errorJson = JObject.Parse(errorResponse);
+                        var detailedErrorMessage = errorJson["error"]["message"]["value"].ToString();
+                        Console.WriteLine($"Error al actualizar la tasa de cambio: {detailedErrorMessage}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Tasa de cambio actualizada correctamente");
+                    }
+                    //hasta aqui quitar
+                switch (config.TypeService)
                     {
                         case 1:
-                            await ProcessInvoicesNormaL(timeCancelation.Token, listInvoiceXML, listServiceBasicXML, listServiceTouristXML);
+                            await GetCardCodeByTaxId("191040025");
+                            //await ProcessInvoicesPrueba(timeCancelation.Token, listInvoiceXML);
                             break;
                         case 2:
-                            await ProcessInvoices(timeCancelation.Token, listInvoiceXML,listServiceBasicXML, listServiceTouristXML);
+                            //await ProcessInvoices(timeCancelation.Token, listInvoiceXML);
                             break;
                         case 3:
-                            await ProcessInvoices(timeCancelation.Token, listInvoiceXML,listServiceBasicXML, listServiceTouristXML);
+                            //await ProcessInvoices(timeCancelation.Token, listInvoiceXML);
                             break;
                         default:
                             throw new Exception($"TypeService desconocido: {config.TypeService}");
-                    } 
+                    }
                 }
                 else
                 {
@@ -104,74 +127,118 @@ namespace EmailToSAPInvoice.Service
                 Console.WriteLine($"Excepción al conectar a SAP: {e.Message}");
             }
         }
-        private async Task ProcessInvoicesNormaL(CancellationToken cancellationToken,
-                                   List<FacturaCompraVentas.facturaElectronicaCompraVenta> listInvoiceXML,
-                                   List<FacturaServicioBasicos.facturaElectronicaServicioBasico> listServiceBasicXML,
-                                   List<FacturaServicioTuristicoHospedajes.facturaElectronicaServicioTuristicoHospedaje> listServiceTouristXML)
+        private async Task ProcessInvoicesPrueba(CancellationToken cancellationToken, List<FacturaBase> listInvoiceXML)
         {
             foreach (var factura in listInvoiceXML)
             {
-                var invoiceJson = new
+                try
                 {
-                    CardCode = factura.cabecera.nitEmisor,
-                    DocDate = (factura.cabecera.fechaEmision).ToString("yyyy-MM-dd"),
-                    DocumentLines = factura.detalle?.Select(d => d == null ? null : new
+                    bool proveedorX = true;
+                    if (config.Provider)
                     {
-                        ItemCode = d.codigoProducto,
-                        Quantity = d.cantidad,
-                        TaxCode = "IVA",
-                        UnitPrice = d.precioUnitario
-                    }).ToList()
-                }; 
-                string jsonContent = JsonConvert.SerializeObject(invoiceJson);
-                HttpContent contentInvoice = new StringContent(jsonContent, Encoding.UTF8, "application/json"); 
-                var insertResponse = await client.PostAsync(config.Url + "Invoices", contentInvoice, cancellationToken);
-                if (insertResponse.IsSuccessStatusCode)
-                {
-                    databaseHandler.UpdateStatus(factura.identifier, Datas.StatusProcessed, " ");
+                        if (!proveedorX)
+                        {
+                            // crea proveedor
+                        }
+                        await ProcessInvoice(factura, cancellationToken);
+                    }
+                    else if (proveedorX)
+                    {
+                        await ProcessInvoice(factura, cancellationToken);
+                    }
+                    else
+                    {
+                        // añade a la base que no existe proveedor
+                    }
                 }
-                else
-                {
-                    databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, $"{insertResponse.StatusCode}");
-                    Console.WriteLine($"Error al insertar factura: {insertResponse.StatusCode}");
+                catch { 
                 }
-            }
-             
+            }  
         }
-        private async Task ProcessInvoices(CancellationToken cancellationToken,
-                                   List<FacturaCompraVentas.facturaElectronicaCompraVenta> listInvoiceXML,
-                                   List<FacturaServicioBasicos.facturaElectronicaServicioBasico> listServiceBasicXML,
-                                   List<FacturaServicioTuristicoHospedajes.facturaElectronicaServicioTuristicoHospedaje> listServiceTouristXML)
+        private async Task ProcessInvoice(FacturaBase factura, CancellationToken cancellationToken)
         {
-            foreach (var factura in listInvoiceXML)
+            try
             {
                 var invoiceJson = new
                 {
-                    CardCode = factura.cabecera.nitEmisor,
-                    DocDate = (factura.cabecera.fechaEmision).ToString("yyyy-MM-dd"),
+                    CardCode = "R000003",//factura.cabecera.nitEmisor.ToString(),
+                    //DocDate = factura.cabecera.fechaEmision.ToString("yyyy-MM-dd"), //Descomentar considerar el tipo de cambio en la fecha para insertar factura
                     DocumentLines = factura.detalle?.Select(d => d == null ? null : new
                     {
-                        ItemCode = d.codigoProducto,
-                        Quantity = d.cantidad,
+                        ItemCode = d.codigoProducto.ToString(),
+                        Quantity = d.cantidad.ToString(),
                         TaxCode = "IVA",
-                        UnitPrice = d.precioUnitario
+                        UnitPrice = d.precioUnitario.ToString(CultureInfo.InvariantCulture)
                     }).ToList()
                 };
                 string jsonContent = JsonConvert.SerializeObject(invoiceJson);
+                Console.Write("esto serializo: " + jsonContent + "\n");
                 HttpContent contentInvoice = new StringContent(jsonContent, Encoding.UTF8, "application/json");
                 var insertResponse = await client.PostAsync(config.Url + "Invoices", contentInvoice, cancellationToken);
                 if (insertResponse.IsSuccessStatusCode)
                 {
-                    databaseHandler.UpdateStatus(factura.identifier, Datas.StatusProcessed, " ");
+                    Console.WriteLine($"Se insertó factura: {insertResponse.StatusCode}");
+                    databaseHandler.UpdateStatus(factura.identifier, Datas.StatusProcessed, $"Se insertó factura: {insertResponse.StatusCode}");
                 }
                 else
                 {
-                    databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, $"{insertResponse.StatusCode}");
-                    Console.WriteLine($"Error al insertar factura: {insertResponse.StatusCode}");
+                    var errorResponse = await insertResponse.Content.ReadAsStringAsync();
+                    var errorJson = JObject.Parse(errorResponse);
+                    var detailedErrorMessage = errorJson["error"]["message"]["value"].ToString();
+                    databaseHandler.UpdateStatus(factura.identifier, Datas.StatusPending, detailedErrorMessage);
                 }
             }
-
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine($"Excepción al intentar insertar la factura: {e.Message}");
+            }
         }
+        private async Task GetCardCodeByTaxId(string taxId)
+        {
+            var response = await client.GetAsync(config.Url + "BusinessPartners?$filter=FederalTaxID eq '" + taxId + "'");
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var businessPartners = JsonConvert.DeserializeObject<dynamic>(jsonResponse);
+                if (businessPartners.value.Count > 0)
+                {
+                    var cardCode = businessPartners.value[0].CardCode;
+                    Console.WriteLine($"CardCode para el NIT {taxId} es {cardCode}");
+                }
+                else
+                {
+                    Console.WriteLine($"No se encontró un socio comercial con el NIT {taxId}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Error al recuperar el socio comercial: {response.StatusCode}");
+            }
+        }
+
+        private async Task PruebaProvider()
+        {
+            var carCode = "R000003";
+            var getResponse = await client.GetAsync(config.Url + "BusinessPartners" + $"('{carCode}')");
+            Console.Write("Este dato: " + getResponse);
+            if (getResponse.IsSuccessStatusCode)
+            {
+                var responseContent = await getResponse.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(responseContent))
+                {
+                    Console.WriteLine("La respuesta contiene datos.");
+                }
+                else
+                {
+                    Console.WriteLine("La respuesta no contiene datos.");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"La solicitud falló con el estado: {getResponse.StatusCode}");
+            }
+        }
+
         public void Dispose()
         {
             handler?.Dispose();

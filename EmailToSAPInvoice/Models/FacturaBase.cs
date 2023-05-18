@@ -16,10 +16,10 @@ namespace EmailToSAPInvoice.Models
         public object identifier { get; set; }
 
         [XmlElement("cabecera")]
-        public Cabecera[] cabecera { get; set; }
+        public Cabecera cabecera { get; set; }
 
         [XmlElement("detalle")]
-        public Detalle detalle { get; set; }
+        public Detalle[] detalle { get; set; }
 
         [XmlElement("signature", Namespace = "http://www.w3.org/2000/09/xmldsig#")]
         public Signature signature { get; set; }
@@ -55,8 +55,8 @@ namespace EmailToSAPInvoice.Models
         {
             public uint actividadEconomica { get; set; }
             public uint codigoProductoSin { get; set; }
-            public object codigoProducto { get; set; }
-            public object cantidad { get; set; }
+            public uint codigoProducto { get; set; }
+            public byte cantidad { get; set; }
             public byte unidadMedida { get; set; }
             public decimal precioUnitario { get; set; }
             public string montoDescuento { get; set; }
@@ -125,7 +125,6 @@ namespace EmailToSAPInvoice.Models
                 }
             }
         }
-
     }
     [System.Xml.Serialization.XmlRootAttribute("facturaElectronicaServicioTuristicoHospedaje", Namespace = "", IsNullable = false)]
     public class FacturaServicioTuristicoHospedaje : FacturaBase
