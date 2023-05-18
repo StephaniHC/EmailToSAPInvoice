@@ -17,28 +17,25 @@ using MailKit.Net.Pop3;
 using ReactiveUI;
 using EmailToSAPInvoice.Views;
 using System.Xml.Serialization;
-using DynamicData;
-using System.Net.Mail;
-using System.Reactive;
 
 namespace EmailToSAPInvoice.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
         public string Greeting => "Correos Adjuntos XML";
-        public string Result { get; set; } = "read emails only xml";  
-        public string ButtonAddEmail => "Añadir Correos"; 
+        public string Result { get; set; } = "read emails only xml";
+        public string ButtonAddEmail => "Añadir Correos";
         public string ButtonRead => "Actualizar";
-        public string LabelTittle  => "Lista de Registrados";  
+        public string LabelTittle => "Lista de Registrados";
         public List<string> ResultEmails { get; set; } = new List<string>();
-        public List<List<string>> dataReadEmail{ get; set; } = new List<List<string>>(); 
+        public List<List<string>> dataReadEmail { get; set; } = new List<List<string>>();
         public IReadOnlyList<IReadOnlyList<string>> DataPop => dataReadEmail.AsReadOnly();
         public ObservableCollection<Datas> DatasEmailList { get; set; } = new ObservableCollection<Datas>();
         public ICommand GoToSecondWindow { get; set; }
-        public ICommand DownloadXmlAttachmentsCommand => new RelayCommand(SetAttachments); 
+        public ICommand DownloadXmlAttachmentsCommand => new RelayCommand(SetAttachments);
         public string rutaData { get; set; }
         public string rutaDownload { get; set; }
-        public Route Rutas { get; set; } 
+        public Route Rutas { get; set; }
         private DatabaseHandler databaseHandler = new DatabaseHandler();
         private ObservableCollection<EmailResult> _resultE;
         public ObservableCollection<EmailResult> ResultE
@@ -46,19 +43,21 @@ namespace EmailToSAPInvoice.ViewModels
             get { return _resultE; }
             set
             {
-                _resultE = value; 
+                _resultE = value;
             }
         }
 
         private SAPServiceLayerConnection sapService;
-        private List<FacturaCompraVenta.facturaElectronicaCompraVenta> facturaList;
-        private List<FacturaServicioBasico.facturaElectronicaServicioBasico> facturaServiceList;
-        private List<FacturaServicioTuristicoHospedaje.facturaElectronicaServicioTuristicoHospedaje> facturaServiceTouristList;
+        private List<FacturaCompraVentas.facturaElectronicaCompraVenta> facturaList;
+        private List<FacturaServicioBasicos.facturaElectronicaServicioBasico> facturaServiceList;
+        private List<FacturaServicioTuristicoHospedajes.facturaElectronicaServicioTuristicoHospedaje> facturaServiceTouristList;
+
+        private List<FacturaBase> facturas;
         public MainWindowViewModel()
         {
             GoToSecondWindow = ReactiveCommand.Create(() =>
             {
-               var userEmailWindow = new MainUserEmailWindow();
+                var userEmailWindow = new MainUserEmailWindow();
                 userEmailWindow.Show();
             });
             GetRutas();
@@ -67,15 +66,16 @@ namespace EmailToSAPInvoice.ViewModels
             Rutas = new Route();
             databaseHandler = new DatabaseHandler();
             ResultE = new ObservableCollection<EmailResult>();
-            GetData(); 
-            facturaList = new List<FacturaCompraVenta.facturaElectronicaCompraVenta>();
-            facturaServiceList = new List<FacturaServicioBasico.facturaElectronicaServicioBasico>();
-            facturaServiceTouristList = new List<FacturaServicioTuristicoHospedaje.facturaElectronicaServicioTuristicoHospedaje>();
+            GetData();
+            facturaList = new List<FacturaCompraVentas.facturaElectronicaCompraVenta>();
+            facturaServiceList = new List<FacturaServicioBasicos.facturaElectronicaServicioBasico>();
+            facturaServiceTouristList = new List<FacturaServicioTuristicoHospedajes.facturaElectronicaServicioTuristicoHospedaje>();
+            facturas = new List<FacturaBase>();
         }
-         
+
         private void GetRutas()
         {
-            var directory = "Ruta.json"; 
+            var directory = "Ruta.json";
             if (File.Exists(directory))
             {
                 string json = File.ReadAllText(directory);
@@ -84,14 +84,14 @@ namespace EmailToSAPInvoice.ViewModels
                 rutaDownload = ruta.Download;
             }
             else
-            {  
+            {
                 rutaData = "../../../Data.json";
                 rutaDownload = Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).FullName).FullName).FullName;
-            } 
+            }
         }
         private void GetListaRegistrados()
-        { 
-            string json = File.ReadAllText(rutaData); 
+        {
+            string json = File.ReadAllText(rutaData);
             Imbox inbox = JsonSerializer.Deserialize<Imbox>(json);
             foreach (var proveedor in inbox.Proveedores)
                 foreach (var clientes in proveedor.Clientes)
@@ -107,7 +107,7 @@ namespace EmailToSAPInvoice.ViewModels
 
         private void GetData()
         {
-            var datas = databaseHandler.GetAllDatasEmail(); 
+            var datas = databaseHandler.GetAllDatasEmail();
             foreach (Datas datasc in datas)
             {
                 DateTime fechaHora = DateTime.Parse(datasc.Date);
@@ -121,9 +121,9 @@ namespace EmailToSAPInvoice.ViewModels
                 };
                 ResultE.Add(resultado);
             }
-        }  
+        }
         private void GetDatosEmail()
-        { 
+        {
             string json = File.ReadAllText(rutaData);
             Imbox inbox = JsonSerializer.Deserialize<Imbox>(json);
             foreach (var proveedor in inbox.Proveedores)
@@ -136,7 +136,7 @@ namespace EmailToSAPInvoice.ViewModels
                         {
                             foreach (var metodo in proveedor.Metodos)
                             {
-                                dataReadEmail.Add(new List<string> { clientes.Email, clientes.Password, metodo.Url, (metodo.Puerto).ToString(), metodo.Nombre});
+                                dataReadEmail.Add(new List<string> { clientes.Email, clientes.Password, metodo.Url, (metodo.Puerto).ToString(), metodo.Nombre });
                                 break;
                             }
                         }
@@ -145,7 +145,7 @@ namespace EmailToSAPInvoice.ViewModels
             }
         }
         public void SetAttachments()
-        { 
+        {
             var downDirectory = Path.Combine(rutaDownload + "/descargaXML");
             if (!Directory.Exists(downDirectory))
             {
@@ -157,7 +157,7 @@ namespace EmailToSAPInvoice.ViewModels
                 {
                     SetAttachmentsEmail(dataEmail[0], dataEmail[1], dataEmail[2], int.Parse(dataEmail[3]), dataEmail[4], downDirectory);
                 }
-            } 
+            }
         }
 
         private void SetAttachmentsEmail(string email, string password, string url, int puerto, string metodo, string downDirectory)
@@ -220,33 +220,33 @@ namespace EmailToSAPInvoice.ViewModels
                 Console.WriteLine("Método desconocido \n");
                 return;
             }
-        }   
+        }
         public object ReadFile(string archivo)
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(archivo);
-            string rootElementName = doc.DocumentElement.Name; 
+            string rootElementName = doc.DocumentElement.Name;
             XmlSerializer serializer;
             if (rootElementName == "facturaElectronicaCompraVenta")
-            { 
-                serializer = new XmlSerializer(typeof(FacturaCompraVenta.facturaElectronicaCompraVenta)); 
+            {
+                serializer = new XmlSerializer(typeof(FacturaCompraVentas.facturaElectronicaCompraVenta));
             }
             else if (rootElementName == "facturaElectronicaServicioBasico")
-            { 
-                serializer = new XmlSerializer(typeof(FacturaServicioBasico.facturaElectronicaServicioBasico)); 
+            {
+                serializer = new XmlSerializer(typeof(FacturaServicioBasicos.facturaElectronicaServicioBasico));
             }
             else if (rootElementName == "facturaElectronicaServicioTuristicoHospedaje")
-            { 
-                serializer = new XmlSerializer(typeof(FacturaServicioTuristicoHospedaje.facturaElectronicaServicioTuristicoHospedaje)); 
+            {
+                serializer = new XmlSerializer(typeof(FacturaServicioTuristicoHospedajes.facturaElectronicaServicioTuristicoHospedaje));
             }
             else
-            { 
+            {
                 return null;
             }
             try
             {
                 using (StreamReader reader = new StreamReader(archivo))
-                { 
+                {
                     return serializer.Deserialize(reader);
                 }
             }
@@ -254,40 +254,40 @@ namespace EmailToSAPInvoice.ViewModels
             {
                 return null;
             }
-        } 
+        }
 
         public void GetDataInvoice()
-        { 
+        {
             sapService = new SAPServiceLayerConnection();
             var datas = databaseHandler.GetPendingEmails();
             string xmlFolderPath = Path.Combine(rutaDownload, "descargaXML");
             foreach (Datas email in datas)
-            { 
+            {
                 string attachmentName = email.Attached;
                 string filePath = Path.Combine(xmlFolderPath, attachmentName);
                 if (File.Exists(filePath))
-                { 
+                {
                     var factura = ReadFile(filePath);
                     if (factura != null)
                     {
-                        if (factura is FacturaCompraVenta.facturaElectronicaCompraVenta)
+                        if (factura is FacturaCompraVentas.facturaElectronicaCompraVenta)
                         {
-                            var facturaCompraVenta = (FacturaCompraVenta.facturaElectronicaCompraVenta)factura;
+                            var facturaCompraVenta = (FacturaCompraVentas.facturaElectronicaCompraVenta)factura;
                             facturaCompraVenta.identifier = email.Id;
                             facturaList.Add(facturaCompraVenta);
                             Console.Write("\n guardo a la lista: " + facturaList + "\n ");
 
                         }
-                        else if (factura is FacturaServicioBasico.facturaElectronicaServicioBasico)
+                        else if (factura is FacturaServicioBasicos.facturaElectronicaServicioBasico)
                         {
-                            var facturaServicioBasico = (FacturaServicioBasico.facturaElectronicaServicioBasico)factura;
+                            var facturaServicioBasico = (FacturaServicioBasicos.facturaElectronicaServicioBasico)factura;
                             facturaServicioBasico.identifier = email.Id;
                             facturaServiceList.Add(facturaServicioBasico);
                             Console.Write("\n guardo a la lista: " + facturaServiceList + "\n ");
                         }
-                        else if (factura is FacturaServicioTuristicoHospedaje.facturaElectronicaServicioTuristicoHospedaje)
+                        else if (factura is FacturaServicioTuristicoHospedajes.facturaElectronicaServicioTuristicoHospedaje)
                         {
-                            var facturaServicioTuristicoHospedaje = (FacturaServicioTuristicoHospedaje.facturaElectronicaServicioTuristicoHospedaje)factura;
+                            var facturaServicioTuristicoHospedaje = (FacturaServicioTuristicoHospedajes.facturaElectronicaServicioTuristicoHospedaje)factura;
                             facturaServicioTuristicoHospedaje.identifier = email.Id;
                             facturaServiceTouristList.Add(facturaServicioTuristicoHospedaje);
                             Console.Write("\n guardo a la lista: " + facturaServiceTouristList + "\n ");
@@ -295,11 +295,62 @@ namespace EmailToSAPInvoice.ViewModels
                     }
                     else
                     {
-                        databaseHandler.UpdateStatus(email.Id,Datas.StatusError,"No cumple con la estructura de Facturacion.XML");
+                        databaseHandler.UpdateStatus(email.Id, Datas.StatusError, "No cumple con la estructura de Facturacion.XML");
                     }
                 }
             }
             sapService.ConnectToSAP(facturaList, facturaServiceList, facturaServiceTouristList).GetAwaiter().GetResult();
-        }  
+        }
+        public void GetDataInvoicePrueba()
+        {
+            Console.Write("ingreso por aqui");
+            sapService = new SAPServiceLayerConnection();
+            var datas = databaseHandler.GetPendingEmails();
+            string xmlFolderPath = Path.Combine(rutaDownload, "descargaXML");
+            foreach (Datas email in datas)
+            {
+                string attachmentName = email.Attached;
+                string filePath = Path.Combine(xmlFolderPath, attachmentName);
+                if (File.Exists(filePath))
+                {
+                    var factura = ReadFilePrueba(filePath);
+                    if (factura != null)
+                    {
+                        facturas.Add(factura);
+                        Console.Write("lo añadio" + factura);
+                    }
+                    else
+                    {
+                        databaseHandler.UpdateStatus(email.Id, Datas.StatusError, "No cumple con la estructura de Facturacion.XML");
+                    }
+                    }
+                }
+                // sapService.ConnectToSAP(facturaList, facturaServiceList, facturaServiceTouristList).GetAwaiter().GetResult();
+            }
+            public FacturaBase ReadFilePrueba(string archivo)
+            {
+                using (var reader = XmlReader.Create(archivo))
+                {
+                    reader.MoveToContent();
+                    switch (reader.Name)
+                    {
+                        case "facturaElectronicaServicioTuristicoHospedaje":
+                            Console.Write("\n Es 1 facturaElectronicaServicioTuristicoHospedaje \n ");
+                            var serializerHospedaje = new XmlSerializer(typeof(FacturaServicioTuristicoHospedaje));
+                            return (FacturaServicioTuristicoHospedaje)serializerHospedaje.Deserialize(reader);
+                        case "facturaElectronicaServicioBasico":
+                            Console.Write("\n Es 2 facturaElectronicaServicioBasico \n ");
+                            var serializerBasico = new XmlSerializer(typeof(FacturaServicioBasico));
+                            return (FacturaServicioBasico)serializerBasico.Deserialize(reader);
+                        case "facturaElectronicaCompraVenta":
+                            Console.Write("\n Es 3 facturaElectronicaCompraVenta \n ");
+                            var serializerCompraVenta = new XmlSerializer(typeof(FacturaCompraVenta));
+                            return (FacturaCompraVenta)serializerCompraVenta.Deserialize(reader);
+                        default:
+                            Console.WriteLine("No se reconoce el tipo de factura");
+                            return null;
+                    }
+                }
+            }
     }
 }

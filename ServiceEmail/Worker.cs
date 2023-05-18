@@ -24,7 +24,7 @@ namespace ServiceEmail
         private void OnTimerElapsed(object state)
         {
             var mainWindowViewModel = new MainWindowViewModel();
-            mainWindowViewModel.GetDataInvoice();
+            mainWindowViewModel.GetDataInvoicePrueba();
         }
     }
 }
