@@ -177,12 +177,29 @@ namespace EmailToSAPInvoice.ViewModels
                             foreach (var attachment in message.Attachments.OfType<MimePart>().Where(x => x.FileName.EndsWith(".xml")))
                             {
                                 var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(attachment.FileName);
+                                var extension = Path.GetExtension(attachment.FileName);
+                                int count = 1;
+                                var fileName = Path.Combine(downDirectory, $"{fileNameWithoutExtension}_{timestamp}{extension}");
+                                while (File.Exists(fileName))
+                                {
+                                    fileName = Path.Combine(downDirectory, $"{fileNameWithoutExtension}_{timestamp}({count}){extension}");
+                                    count++;
+                                }
+                                var stream = File.Create(fileName);
+                                attachment.Content.DecodeTo(stream);
+                                stream.Dispose();
+                                databaseHandler.InsertData(message.Date.ToString(), message.Subject, $"{fileNameWithoutExtension}_{timestamp}({count - 1}){extension}");
+                            }
+                            /*foreach (var attachment in message.Attachments.OfType<MimePart>().Where(x => x.FileName.EndsWith(".xml")))
+                            {
+                                var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
                                 var fileName = Path.Combine(downDirectory, $"{attachment.FileName}_{timestamp}");
                                 var stream = File.Create(fileName);
                                 attachment.Content.DecodeTo(stream);
                                 stream.Dispose();
                                 databaseHandler.InsertData(message.Date.ToString(), message.Subject, $"{timestamp}_{attachment.FileName}");
-                            }
+                            }*/
                         }
                     }
                     client.Disconnect(true);
@@ -203,13 +220,32 @@ namespace EmailToSAPInvoice.ViewModels
                             foreach (var attachment in message.Attachments.OfType<MimePart>().Where(x => x.FileName.EndsWith(".xml")))
                             {
                                 var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(attachment.FileName);
+                                var extension = Path.GetExtension(attachment.FileName);
+                                int count = 1;
+                                var fileName = Path.Combine(downDirectory, $"{timestamp}_{fileNameWithoutExtension}{extension}");
+                                while (File.Exists(fileName))
+                                {
+                                    fileName = Path.Combine(downDirectory, $"{timestamp}_{fileNameWithoutExtension}({count}){extension}");
+                                    count++;
+                                }
+                                using (var stream = File.Create(fileName))
+                                {
+                                    attachment.Content.DecodeTo(stream);
+                                }
+                                databaseHandler.InsertData(message.Date.ToString(), message.Subject, $"{timestamp}_{fileNameWithoutExtension}({count - 1}){extension}");
+                            }
+
+                            /*foreach (var attachment in message.Attachments.OfType<MimePart>().Where(x => x.FileName.EndsWith(".xml")))
+                            {
+                                var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
                                 var fileName = Path.Combine(downDirectory, $"{timestamp}_{attachment.FileName}");
                                 using (var stream = File.Create(fileName))
                                 {
                                     attachment.Content.DecodeTo(stream);
                                 }
                                 databaseHandler.InsertData(message.Date.ToString(), message.Subject, $"{timestamp}_{attachment.FileName}");
-                            }
+                            }*/
                         }
                     }
                     client.Disconnect(true);
@@ -313,21 +349,20 @@ namespace EmailToSAPInvoice.ViewModels
                 string filePath = Path.Combine(xmlFolderPath, attachmentName);
                 if (File.Exists(filePath))
                 {
-                    var factura = ReadFilePrueba(filePath);
+                    var factura = ReadFilePrueba(email.Id,filePath);
                     if (factura != null)
                     {
                         facturas.Add(factura);
+                        databaseHandler.UpdateStatus(email.Id, Datas.StatusPending, "paso");
                         Console.Write("lo añadio" + factura);
                     }
-                    else
-                    {
-                        databaseHandler.UpdateStatus(email.Id, Datas.StatusError, "No cumple con la estructura de Facturacion.XML");
-                    }
-                    }
                 }
-                // sapService.ConnectToSAP(facturaList, facturaServiceList, facturaServiceTouristList).GetAwaiter().GetResult();
             }
-            public FacturaBase ReadFilePrueba(string archivo)
+            // sapService.ConnectToSAP(facturaList, facturaServiceList, facturaServiceTouristList).GetAwaiter().GetResult();
+        }
+        public FacturaBase ReadFilePrueba(int emailId, string archivo)
+        {
+            try
             {
                 using (var reader = XmlReader.Create(archivo))
                 {
@@ -347,10 +382,17 @@ namespace EmailToSAPInvoice.ViewModels
                             var serializerCompraVenta = new XmlSerializer(typeof(FacturaCompraVenta));
                             return (FacturaCompraVenta)serializerCompraVenta.Deserialize(reader);
                         default:
-                            Console.WriteLine("No se reconoce el tipo de factura");
+                            string errorMessage = $"No se reconoce el tipo de factura: {reader.Name}";  
+                            databaseHandler.UpdateStatus(emailId, Datas.StatusError, errorMessage); 
                             return null;
                     }
                 }
             }
+            catch (Exception e)
+            {
+                databaseHandler.UpdateStatus(emailId, Datas.StatusError, e.Message); 
+                return null;
+            }
+        }
     }
 }

@@ -3,7 +3,6 @@
     <cabecera>
         <nitEmisor>1028399028</nitEmisor>
         <razonSocialEmisor>COOPERATIVA RURAL DE ELECTRIFICACION RL.</razonSocialEmisor>
-        <municipio>SANTA CRUZ DE LA SIERRA</municipio>
         <telefono>3367777</telefono>
         <numeroFactura>3223475</numeroFactura>
         <cuf>465DACBB8ABC2833F759AA19B2248F6FD3F35301E029CB68083A8FD74</cuf>
@@ -23,7 +22,6 @@
         <numeroDocumento>3590144</numeroDocumento>
         <complemento xsi:nil="true"></complemento>
         <codigoCliente>00119682-01</codigoCliente>
-        <codigoMetodoPago>6</codigoMetodoPago>
         <numeroTarjeta xsi:nil="true"></numeroTarjeta>
         <montoTotal>389.50</montoTotal>
         <montoTotalSujetoIva>326.10</montoTotalSujetoIva>
