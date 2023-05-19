@@ -17,5 +17,9 @@ namespace EmailToSAPInvoice.Models
         public bool Certificate { get; set; }
         public int TypeService { get; set; }
         public bool Provider { get; set; }
+        public string SAPWarehouseCode { get; set; }
+        public string SAPAccountCode { get; set; } 
+        public string SAPAccountCodeCredito { get; set; }
+        public string SAPAccountCodeDebito { get; set; }
     }
 } 

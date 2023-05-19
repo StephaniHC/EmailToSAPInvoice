@@ -1,6 +1,6 @@
 <facturaElectronicaCompraVenta xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="facturaElectronicaCompraVenta.xsd">
 <cabecera>
-<nitEmisor>145186023</nitEmisor>
+<nitEmisor>198745144</nitEmisor>
 <razonSocialEmisor>RODUGA INVERSIONES SOCIEDAD ANONIMA</razonSocialEmisor>
 <municipio>Santa Cruz</municipio>
 <telefono>33110080</telefono>

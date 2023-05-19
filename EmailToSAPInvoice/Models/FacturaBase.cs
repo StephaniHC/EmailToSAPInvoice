@@ -55,11 +55,12 @@ namespace EmailToSAPInvoice.Models
         {
             public uint actividadEconomica { get; set; }
             public uint codigoProductoSin { get; set; }
-            public uint codigoProducto { get; set; }
+            public string codigoProducto { get; set; }
+            public string descripcion { get; set; }
             public object cantidad { get; set; }
             public byte unidadMedida { get; set; }
             public decimal precioUnitario { get; set; }
-            public string montoDescuento { get; set; }
+            public object montoDescuento { get; set; }
             public decimal subTotal { get; set; }  
         }
         public class Signature

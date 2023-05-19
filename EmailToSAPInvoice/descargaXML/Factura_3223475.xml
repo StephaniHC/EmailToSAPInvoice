@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <facturaElectronicaServicioBasico xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="facturaElectronicaServicioBasico.xsd">
     <cabecera>
-        <nitEmisor>1000005845</nitEmisor>
+        <nitEmisor>14514965</nitEmisor>
         <razonSocialEmisor>COOPERATIVA RURAL DE ELECTRIFICACION RL.</razonSocialEmisor>
         <municipio>SANTA CRUZ DE LA SIERRA</municipio>
         <telefono>3367777</telefono>
