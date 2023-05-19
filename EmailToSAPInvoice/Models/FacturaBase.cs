@@ -56,7 +56,7 @@ namespace EmailToSAPInvoice.Models
             public uint actividadEconomica { get; set; }
             public uint codigoProductoSin { get; set; }
             public uint codigoProducto { get; set; }
-            public byte cantidad { get; set; }
+            public object cantidad { get; set; }
             public byte unidadMedida { get; set; }
             public decimal precioUnitario { get; set; }
             public string montoDescuento { get; set; }
