@@ -83,7 +83,7 @@ namespace EmailToSAPInvoice.Service
                     {
                         Currency = "USD",
                         Rate = "6.96",
-                        RateDate = "20230519"
+                        RateDate = "20230522"
                     };
                     string jsonContent1 = JsonConvert.SerializeObject(currencyRateJson);
                     HttpContent contentCurrencyRate = new StringContent(jsonContent1, Encoding.UTF8, "application/json");
@@ -228,23 +228,24 @@ namespace EmailToSAPInvoice.Service
 
                     if (isBusinessPartnerExists || config.Provider)
                     {
-                        var invoiceLines = factura.detalle?.Select(d => d == null ? null : new
-                        {
-                            AccountCode = config.SAPAccountCodeCredito,
-                            Credit = 100,
-                            Debit = 0
-                            //ShortName = cardCode
-                        }).ToList(); 
+                            var invoiceLines = factura.detalle?.Select(d => d == null ? null : new
+                            {
+                                AccountCode = config.SAPAccountCodeCredito,
+                                Credit = d.subTotal,
+                                Debit = 0m  // El "m" hace que sea decimal
+                            } ).ToList();
 
-                        invoiceLines.Add(new
-                        {
-                            AccountCode = config.SAPAccountCodeDebito,
-                            Credit = 0,
-                            Debit = 100
-                           // ShortName = cardCode
-                        });
+                            //Calculamos el total de la factura
+                            var totalFactura = factura.detalle?.Sum(d => d.subTotal) ?? 0;
 
-                        var invoiceJson = new
+                            invoiceLines.Add(new
+                            {
+                                AccountCode = config.SAPAccountCodeDebito,
+                                Credit = 0m,
+                                Debit = totalFactura
+                            }
+                            );
+                            var invoiceJson = new
                         {
                             JournalEntryLines = invoiceLines
                         };
