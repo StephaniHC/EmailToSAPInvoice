@@ -7,29 +7,26 @@
         x:Class="EmailToSAPInvoice.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="EmailToSAPInvoice">
-
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
-
 	<Grid Margin="15">
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
 			<!-- Greeting -->
 			<RowDefinition Height="Auto"/>
 			<!-- Cabecera -->
-			<RowDefinition Height="2*"/>
+			<RowDefinition Height="Auto"/>
 			<!-- ResultE -->
-			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="2*"/>
 			<!-- LabelTittle -->
-			<RowDefinition Height="*"/>
-			<!-- ResultEmails -->
 			<RowDefinition Height="Auto"/>
+			<!-- ResultEmails -->
+			<RowDefinition Height="*"/>
 			<!-- Buttons -->
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
-
 		<!-- Greeting -->
 		<TextBlock Grid.Row="0"
 				   Text="{Binding Greeting}"
@@ -37,7 +34,6 @@
 				   FontWeight="Medium"
 				   FontFamily="Montserrat"
 				   TextAlignment="Center"/>
- 
 		<!-- Cabecera --> 
 		<Grid Grid.Row="1">
 			<Grid.ColumnDefinitions>
@@ -51,7 +47,6 @@
 			<TextBlock Grid.Column="2" Text="Adjunto" FontWeight="Bold" />
 			<TextBlock Grid.Column="3" Text="Estado" FontWeight="Bold" />
 		</Grid>
-
 		<!-- ResultE -->
 		<ListBox Grid.Row="2" Items="{Binding ResultE}">
 			<ListBox.ItemTemplate>
@@ -71,8 +66,6 @@
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
-
-
 		<!-- LabelTittle -->
 		<TextBlock Grid.Row="3"
 				   Text="{Binding LabelTittle}"
@@ -80,7 +73,6 @@
 				   FontWeight="Medium"
 				   FontFamily="Montserrat"
 				   Margin="0,10"/>
-
 		<!-- ResultEmails -->
 		<ListBox Grid.Row="4"
 				 Items="{Binding ResultEmails}"
@@ -89,7 +81,6 @@
 				 FontFamily="Montserrat"
 				 Width="300"
 				 HorizontalAlignment="Left"/>
-
 		<!-- Botones -->
 		<StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
 			<Button Content="{Binding ButtonAddEmail}"
@@ -102,9 +93,12 @@
 					Command="{Binding DownloadXmlAttachmentsCommand}"
 					FontFamily="Segoe UI"
 					Background="SkyBlue"
-					Margin="0 0 0 0"/>
+					Margin="0 0 0 0"/> 
+			<Button Content="{Binding ButtonAddJournalEntries}"
+					Command="{Binding GoToConfigWindow}"
+					FontFamily="Segoe UI"
+					Background="Beige"
+					Margin="0 0 20 0"/>
 		</StackPanel>
-
 	</Grid> 
-
 </Window>

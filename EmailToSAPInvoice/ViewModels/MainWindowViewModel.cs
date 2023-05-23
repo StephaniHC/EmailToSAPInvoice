@@ -18,6 +18,7 @@ using ReactiveUI;
 using EmailToSAPInvoice.Views;
 using System.Xml.Serialization;
 using DynamicData;
+using MailKit.Search;
 
 namespace EmailToSAPInvoice.ViewModels
 {
@@ -26,6 +27,7 @@ namespace EmailToSAPInvoice.ViewModels
         public string Greeting => "Monitor de Correos";
         public string Result { get; set; } = "read emails only xml";
         public string ButtonAddEmail => "Añadir Correos";
+        public string ButtonAddJournalEntries => "Configuracion Cuentas";
         public string ButtonRead => "Actualizar";
         public string LabelTittle => "Lista de Correos Registrados";
         public List<string> ResultEmails { get; set; } = new List<string>();
@@ -34,6 +36,7 @@ namespace EmailToSAPInvoice.ViewModels
         public ObservableCollection<Datas> DatasEmailList { get; set; } = new ObservableCollection<Datas>();
         public ICommand GoToSecondWindow { get; set; }
         public ICommand DownloadXmlAttachmentsCommand => new RelayCommand(SetAttachments);
+        public ICommand GoToConfigWindow { get; set; }
         public string rutaData { get; set; }
         public string rutaDownload { get; set; }
         public Route Rutas { get; set; }
@@ -65,6 +68,11 @@ namespace EmailToSAPInvoice.ViewModels
             databaseHandler = new DatabaseHandler();
             ResultE = new ObservableCollection<EmailResult>();
             GetData();listInvoice = new List<FacturaBase>();
+            GoToConfigWindow = ReactiveCommand.Create(() =>
+            {
+                var configurationWindow = new MainConfigurationWindow();
+                configurationWindow.Show();
+            });
         }
 
         private void GetRutas()
@@ -153,7 +161,7 @@ namespace EmailToSAPInvoice.ViewModels
                 }
             }
         }
-
+        //aumentar un try y catch en caso que se corte la ejecucuion por internet
         private void SetAttachmentsEmail(string email, string password, string url, int puerto, string metodo, string downDirectory)
         {
             if (metodo.ToLower() == "pop3")
@@ -196,6 +204,56 @@ namespace EmailToSAPInvoice.ViewModels
                 {
                     client.Connect(url, puerto, true);
                     client.Authenticate(email, password);
+
+                    client.Inbox.Open(FolderAccess.ReadWrite); // Abrir la bandeja de entrada en modo de lectura y escritura
+
+                    var uids = client.Inbox.Search(SearchQuery.All);
+
+                    foreach (var uid in uids.Reverse())
+                    {
+                        var message = client.Inbox.GetMessage(uid);
+                        if (message.Attachments.OfType<MimePart>().Any(x => x.FileName.EndsWith(".xml")))
+                        {
+                            foreach (var attachment in message.Attachments.OfType<MimePart>().Where(x => x.FileName.EndsWith(".xml")))
+                            {
+                                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(attachment.FileName);
+                                var extension = Path.GetExtension(attachment.FileName);
+                                int count = 0;
+                                var fileName = Path.Combine(downDirectory, $"{fileNameWithoutExtension}{extension}");
+                                while (File.Exists(fileName))
+                                {
+                                    count++;
+                                    fileName = Path.Combine(downDirectory, $"{fileNameWithoutExtension}({count}){extension}");
+                                }
+                                using (var stream = File.Create(fileName))
+                                {
+                                    attachment.Content.DecodeTo(stream);
+                                }
+                                var finalFileName = count > 0 ? $"{fileNameWithoutExtension}({count}){extension}" : $"{fileNameWithoutExtension}{extension}";
+                                databaseHandler.InsertData(message.Date.ToString(), message.Subject, finalFileName);
+
+                                // Verificar si los mensajes se están marcando correctamente como leídos en el servidor IMAP
+                                try
+                                {
+                                    client.Inbox.AddFlags(uid, MessageFlags.Seen, true);
+                                    Console.WriteLine($"Mensaje marcado como leído - UID: {uid}");
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"Error al marcar el mensaje como leído - UID: {uid}");
+                                    Console.WriteLine(ex.Message);
+                                }
+                            }
+                        }
+                    }
+
+                    client.Disconnect(true);
+                } 
+                /* ORIGINAL
+                using (var client = new ImapClient())
+                {
+                    client.Connect(url, puerto, true);
+                    client.Authenticate(email, password);
                     client.Inbox.Open(FolderAccess.ReadOnly);
                     for (int i = client.Inbox.Count - 1; i >= 0; i--)
                     {
@@ -223,7 +281,7 @@ namespace EmailToSAPInvoice.ViewModels
                         }
                     }
                     client.Disconnect(true);
-                }
+                }*/
             }
             else
             {

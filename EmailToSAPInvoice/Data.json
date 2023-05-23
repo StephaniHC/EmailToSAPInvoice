@@ -17,22 +17,47 @@
       ]
     },
     {
-      "Nombre": "Hotmail",
+      "Nombre": "Outlook",
       "Metodos": [
         {
           "Nombre": "pop3",
-          "Url": "pop.gmail.com",
+          "Url": "outlook.office365.com",
           "Puerto": 995
         },
         {
           "Nombre": "imap",
-          "Url": "imap.gmail.com",
+          "Url": "outlook.office365.com",
           "Puerto": 993
         }
       ],
-      "Clientes": [
-
-      ]
+      "Clientes": []
+    },
+    {
+      "Nombre": "Hotmail",
+      "Metodos": [
+        {
+          "Nombre": "pop3",
+          "Url": "pop3.live.com",
+          "Puerto": 995
+        }
+      ],
+      "Clientes": []
+    },
+    {
+      "Nombre": "Yahoo",
+      "Metodos": [
+        {
+          "Nombre": "pop3",
+          "Url": "pop.mail.yahoo.com",
+          "Puerto": 110
+        },
+        {
+          "Nombre": "imap",
+          "Url": "imap.mail.yahoo.com",
+          "Puerto": 993
+        }
+      ],
+      "Clientes": []
     }
   ]
 }
