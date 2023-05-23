@@ -16,7 +16,7 @@ namespace ServiceEmail
         {
             _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
 
-            _timer = new Timer(OnTimerElapsed, null, TimeSpan.Zero, TimeSpan.FromMinutes(10));
+            _timer = new Timer(OnTimerElapsed, null, TimeSpan.Zero, TimeSpan.FromMinutes(5));
 
             await Task.Delay(Timeout.Infinite, stoppingToken);
         }
@@ -24,6 +24,7 @@ namespace ServiceEmail
         private void OnTimerElapsed(object state)
         {
             var mainWindowViewModel = new MainWindowViewModel();
+            Console.WriteLine("------------------------una vuelta----------------------------");
             mainWindowViewModel.GetDataInvoice();
         }
     }

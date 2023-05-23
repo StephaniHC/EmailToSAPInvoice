@@ -1,4 +1,5 @@
-﻿using DynamicData;
+﻿using Avalonia.X11;
+using DynamicData;
 using EmailToSAPInvoice.Models;
 using EmailToSAPInvoice.Service.Table;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http; 
 using System.Text;
 using System.Threading;
@@ -102,8 +104,7 @@ namespace EmailToSAPInvoice.Service
                     //hasta aqui quitar------------------------------
                 switch (config.TypeService)
                     {
-                        case 1:
-                            //await GetCardCodeByTaxId("191040025");
+                        case 1: 
                             await NormalFunction(timeCancelation.Token, listInvoiceXML);
                             break;
                         case 2:
@@ -136,19 +137,19 @@ namespace EmailToSAPInvoice.Service
             {
                 try
                 {
-                    (bool isBusinessPartnerExists, string cardCode) = await GetCardCodeByTaxId(factura.cabecera.nitEmisor.ToString());
+                    (bool isBusinessPartnerExists, string cardCode, string statusCardCode) = await GetCardCodeByTaxId(factura.cabecera.nitEmisor.ToString());
                     if (!isBusinessPartnerExists && config.Provider)
                     {
-                        cardCode = await CreateBusinessPartner(factura.cabecera.nitEmisor.ToString(), factura.cabecera.razonSocialEmisor, "S", factura.cabecera.nitEmisor.ToString(), cancellationToken);
+                        (cardCode, string statusBusinessParther) = await CreateBusinessPartner(factura.cabecera.nitEmisor.ToString(), factura.cabecera.razonSocialEmisor, "S", factura.cabecera.nitEmisor.ToString(), cancellationToken);
                         if (string.IsNullOrEmpty(cardCode))
                         { 
-                            databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, "Error al crear Proveedor en SAP");
+                            databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, statusBusinessParther);
                             continue;
                         }
                     }
                     else if (!isBusinessPartnerExists && !config.Provider)
                     {
-                        databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, "No existe Proveedor registrado en SAP");
+                        databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, statusCardCode);
                         continue;
                     }
 
@@ -177,19 +178,19 @@ namespace EmailToSAPInvoice.Service
             {
                 try
                 {
-                    (bool isBusinessPartnerExists, string cardCode) = await GetCardCodeByTaxId(factura.cabecera.nitEmisor.ToString());
+                    (bool isBusinessPartnerExists, string cardCode, string statusCardCode) = await GetCardCodeByTaxId(factura.cabecera.nitEmisor.ToString());
                     if (!isBusinessPartnerExists && config.Provider)
                     {
-                        cardCode = await CreateBusinessPartner(factura.cabecera.nitEmisor.ToString(), factura.cabecera.razonSocialEmisor, "S", factura.cabecera.nitEmisor.ToString(), cancellationToken);
+                        (cardCode, string statusBusinessParther) = await CreateBusinessPartner(factura.cabecera.nitEmisor.ToString(), factura.cabecera.razonSocialEmisor, "S", factura.cabecera.nitEmisor.ToString(), cancellationToken);
                         if (string.IsNullOrEmpty(cardCode))
                         {
-                            databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, "Error al crear Proveedor en SAP");
+                            databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, statusBusinessParther);
                             continue;
                         }
                     }
                     else if (!isBusinessPartnerExists && !config.Provider)
                     {
-                        databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, "No existe Proveedor registrado en SAP");
+                        databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, statusCardCode);
                         continue;
                     }
 
@@ -210,46 +211,41 @@ namespace EmailToSAPInvoice.Service
             {
                 try
                 {
-                    (bool isBusinessPartnerExists, string cardCode) = await GetCardCodeByTaxId(factura.cabecera.nitEmisor.ToString());
+                    (bool isBusinessPartnerExists, string cardCode, string statusCardCode) = await GetCardCodeByTaxId(factura.cabecera.nitEmisor.ToString());
                     if (!isBusinessPartnerExists && config.Provider)
                     {
-                        cardCode = await CreateBusinessPartner(factura.cabecera.nitEmisor.ToString(), factura.cabecera.razonSocialEmisor, "S", factura.cabecera.nitEmisor.ToString(), cancellationToken);
+                        (cardCode, string statusBusinessParther) = await CreateBusinessPartner(factura.cabecera.nitEmisor.ToString(), factura.cabecera.razonSocialEmisor, "S", factura.cabecera.nitEmisor.ToString(), cancellationToken);
                         if (string.IsNullOrEmpty(cardCode))
                         {
-                            databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, "Error al crear Proveedor en SAP");
+                            databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, (cardCode, statusBusinessParther));
                             continue;
                         }
                     }
                     else if (!isBusinessPartnerExists && !config.Provider)
                     {
-                        databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, "No existe Proveedor registrado en SAP");
+                        databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, statusCardCode);
                         continue;
                     }
 
                     if (isBusinessPartnerExists || config.Provider)
                     {
-                            var invoiceLines = factura.detalle?.Select(d => d == null ? null : new
-                            {
-                                AccountCode = config.SAPAccountCodeCredito,
-                                Credit = d.subTotal,
-                                Debit = 0m  // El "m" hace que sea decimal
-                            } ).ToList();
-
-                            //Calculamos el total de la factura
-                            var totalFactura = factura.detalle?.Sum(d => d.subTotal) ?? 0;
-
-                            invoiceLines.Add(new
-                            {
-                                AccountCode = config.SAPAccountCodeDebito,
-                                Credit = 0m,
-                                Debit = totalFactura
-                            }
-                            );
-                            var invoiceJson = new
+                        var invoiceLines = factura.detalle?.Select(d => d == null ? null : new
+                        {
+                            AccountCode = config.SAPAccountCodeCredito,
+                            Credit = d.subTotal,
+                            Debit = 0m  // El "m" hace que sea decimal 
+                        }).ToList(); 
+                        var totalFactura = factura.detalle?.Sum(d => d.subTotal) ?? 0; 
+                        invoiceLines.Add(new
+                        {
+                            AccountCode = config.SAPAccountCodeDebito,
+                            Credit = 0m,
+                            Debit = totalFactura
+                        });
+                        var invoiceJson = new
                         {
                             JournalEntryLines = invoiceLines
                         };
-
                         string jsonContent = JsonConvert.SerializeObject(invoiceJson);
                         Console.Write("esto serializo: " + jsonContent + "\n");
                         HttpContent contentInvoice = new StringContent(jsonContent, Encoding.UTF8, "application/json");
@@ -264,7 +260,7 @@ namespace EmailToSAPInvoice.Service
                             var errorResponse = await insertResponse.Content.ReadAsStringAsync();
                             var errorJson = JObject.Parse(errorResponse);
                             var detailedErrorMessage = errorJson["error"]["message"]["value"].ToString();
-                            databaseHandler.UpdateStatus(factura.identifier, Datas.StatusPending, detailedErrorMessage);
+                            databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, detailedErrorMessage);
                         }
                     }
                 }
@@ -289,14 +285,13 @@ namespace EmailToSAPInvoice.Service
                         Quantity = ((XmlNode[])d.cantidad)[0]?.InnerText,
                         TaxCode = "IVA",
                         UnitPrice = d.precioUnitario.ToString(CultureInfo.InvariantCulture),
-                        PriceAfterVAT = d.subTotal.ToString(CultureInfo.InvariantCulture),
-                        WarehouseCode = config.SAPWarehouseCode
+                        PriceAfterVAT = d.subTotal.ToString(CultureInfo.InvariantCulture) 
                     }).ToList()
                 };
                 string jsonContent = JsonConvert.SerializeObject(invoiceJson);
                 Console.Write("esto serializo: " + jsonContent + "\n");
                 HttpContent contentInvoice = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                var insertResponse = await client.PostAsync(config.Url + "PurchaseInvoices", contentInvoice, cancellationToken);
+                var insertResponse = await client.PostAsync(config.Url + "PurchaseInvoices", contentInvoice, cancellationToken); 
                 if (insertResponse.IsSuccessStatusCode)
                 {
                     Console.WriteLine($"Se insertó factura: {insertResponse.StatusCode}");
@@ -307,7 +302,8 @@ namespace EmailToSAPInvoice.Service
                     var errorResponse = await insertResponse.Content.ReadAsStringAsync();
                     var errorJson = JObject.Parse(errorResponse);
                     var detailedErrorMessage = errorJson["error"]["message"]["value"].ToString();
-                    databaseHandler.UpdateStatus(factura.identifier, Datas.StatusPending, detailedErrorMessage);
+                    Console.WriteLine(detailedErrorMessage);
+                    databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, detailedErrorMessage);
                 }
             }
             catch (HttpRequestException e)
@@ -347,7 +343,8 @@ namespace EmailToSAPInvoice.Service
                     var errorResponse = await insertResponse.Content.ReadAsStringAsync();
                     var errorJson = JObject.Parse(errorResponse);
                     var detailedErrorMessage = errorJson["error"]["message"]["value"].ToString();
-                    databaseHandler.UpdateStatus(factura.identifier, Datas.StatusPending, detailedErrorMessage);
+                    Console.WriteLine(detailedErrorMessage);
+                    databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, detailedErrorMessage);
                 }
             }
             catch (HttpRequestException e)
@@ -355,79 +352,81 @@ namespace EmailToSAPInvoice.Service
                 Console.WriteLine($"Excepción al intentar insertar la factura: {e.Message}");
             }
         }
-        private async Task<(bool, string)> GetCardCodeByTaxId(string taxId)
+        private async Task<(bool, string, string)> GetCardCodeByTaxId(string taxId)
         {
-            var response = await client.GetAsync(config.Url + "BusinessPartners?$filter=FederalTaxID eq '" + taxId + "'");
-            if (response.IsSuccessStatusCode)
+            string statusMessage;
+            try
             {
-                var jsonResponse = await response.Content.ReadAsStringAsync();
-                var businessPartners = JsonConvert.DeserializeObject<dynamic>(jsonResponse);
-                if (businessPartners.value.Count > 0)
+                var response = await client.GetAsync(config.Url + "BusinessPartners?$filter=FederalTaxID eq '" + taxId + "'");
+                if (response.IsSuccessStatusCode)
                 {
-                    var cardCode = businessPartners.value[0].CardCode;
-                    Console.WriteLine($"CardCode para el NIT {taxId} es {cardCode}");
-                    return (true, cardCode);
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var businessPartners = JsonConvert.DeserializeObject<dynamic>(jsonResponse);
+                    if (businessPartners.value.Count > 0)
+                    {
+                        var cardCode = businessPartners.value[0].CardCode;
+                        statusMessage = $"CardCode para el NIT {taxId} es {cardCode}";
+                        Console.WriteLine(statusMessage);
+                        return (true, cardCode, statusMessage);
+                    }
+                    else
+                    {
+                        statusMessage = $"No se encontró un socio comercial con el NIT {taxId}";
+                        Console.WriteLine(statusMessage);
+                        return (false, string.Empty, statusMessage);
+                    }
                 }
                 else
                 {
-                    Console.WriteLine($"No se encontró un socio comercial con el NIT {taxId}");
-                    return (false, string.Empty);
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Error al recuperar el socio comercial: {response.StatusCode}");
-                return (false, string.Empty);
-            }
-        }
-        public async Task<string> CreateBusinessPartner(string cardCode, string cardName, string cardType, string FederalTaxID, CancellationToken cancellationToken)
-        {
-             var businessPartner = new
-             {
-                CardCode = cardCode,
-                CardName = cardName,
-                CardType = cardType,
-                FederalTaxID = FederalTaxID
-             };
-             var json = JsonConvert.SerializeObject(businessPartner);
-             var data = new StringContent(json, Encoding.UTF8, "application/json");
-             var response = await client.PostAsync(config.Url + "BusinessPartners", data, cancellationToken);
-             if (response.IsSuccessStatusCode)
-             {
-                    var responseJson = await response.Content.ReadAsStringAsync();
-                    var responseObject = JsonConvert.DeserializeObject<dynamic>(responseJson);
-                    var createdCardCode = responseObject?.CardCode?.Value as string;
-                    Console.WriteLine($"Socio comercial {createdCardCode} creado exitosamente");
-                    return createdCardCode;
-             }
-             else
-             {
-                    Console.WriteLine($"Error al crear socio comercial: {response.StatusCode}");
-                    return string.Empty;
-             }
-        }
+                    statusMessage = $"Error al recuperar el socio comercial: {response.StatusCode}";
+                    Console.WriteLine(statusMessage);
+                    return (false, string.Empty, statusMessage);
 
-        //pruebas
-        private async Task PruebaProvider()
-        {
-            var carCode = "R000003";
-            var getResponse = await client.GetAsync(config.Url + "BusinessPartners" + $"('{carCode}')");
-            Console.Write("Este dato: " + getResponse);
-            if (getResponse.IsSuccessStatusCode)
-            {
-                var responseContent = await getResponse.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(responseContent))
-                {
-                    Console.WriteLine("La respuesta contiene datos.");
-                }
-                else
-                {
-                    Console.WriteLine("La respuesta no contiene datos.");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine($"La solicitud falló con el estado: {getResponse.StatusCode}");
+                statusMessage = $"Error inesperado: {ex.Message}";
+                Console.WriteLine(statusMessage);
+                return (false, string.Empty, statusMessage);
+            } 
+        }
+        public async Task<(string ,string)> CreateBusinessPartner(string cardCode, string cardName, string cardType, string FederalTaxID, CancellationToken cancellationToken)
+        {
+            string statusMessage;
+            try
+            {
+                var businessPartner = new
+                 {
+                    CardCode = cardCode,
+                    CardName = cardName,
+                    CardType = cardType,
+                    FederalTaxID = FederalTaxID
+                 };
+                 var json = JsonConvert.SerializeObject(businessPartner);
+                 var data = new StringContent(json, Encoding.UTF8, "application/json");
+                 var response = await client.PostAsync(config.Url + "BusinessPartners", data, cancellationToken);
+                 if (response.IsSuccessStatusCode)
+                 {
+                        var responseJson = await response.Content.ReadAsStringAsync();
+                        var responseObject = JsonConvert.DeserializeObject<dynamic>(responseJson);
+                        var createdCardCode = responseObject?.CardCode?.Value as string;
+                        statusMessage = $"Socio comercial {createdCardCode} creado exitosamente";
+                        Console.WriteLine(statusMessage);
+                        return (createdCardCode, statusMessage); 
+                 }
+                 else
+                 {
+                    statusMessage = $"Error al crear socio comercial: {response.StatusCode}";
+                    Console.WriteLine(statusMessage);
+                    return (string.Empty, statusMessage); 
+                 }
+            }
+            catch (Exception ex)
+            {
+                statusMessage = $"Error inesperado: {ex.Message}";
+                Console.WriteLine(statusMessage);
+                return (string.Empty, statusMessage);
             }
         }
 

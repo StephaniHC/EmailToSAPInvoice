@@ -23,11 +23,11 @@ namespace EmailToSAPInvoice.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        public string Greeting => "Correos Adjuntos XML";
+        public string Greeting => "Monitor de Correos";
         public string Result { get; set; } = "read emails only xml";
         public string ButtonAddEmail => "Añadir Correos";
         public string ButtonRead => "Actualizar";
-        public string LabelTittle => "Lista de Registrados";
+        public string LabelTittle => "Lista de Correos Registrados";
         public List<string> ResultEmails { get; set; } = new List<string>();
         public List<List<string>> dataReadEmail { get; set; } = new List<List<string>>();
         public IReadOnlyList<IReadOnlyList<string>> DataPop => dataReadEmail.AsReadOnly();

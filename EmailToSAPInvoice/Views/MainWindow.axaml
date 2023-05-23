@@ -15,75 +15,96 @@
     </Design.DataContext>
 
 	<Grid Margin="15">
-		<TextBlock Text="{Binding LabelTittle}"
-				   Margin="60"
-				   HorizontalAlignment="Left"
-				   VerticalAlignment="Top"
-				   FontSize="15"
-				   FontWeight="Regular"
-				   FontFamily="Montserrat"/>
-		<ScrollViewer VerticalScrollBarVisibility="Auto"
-              HorizontalScrollBarVisibility="Auto">
-			<StackPanel>
-				<!-- Cabecera -->
-				<Grid Margin="480,50,0,0">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="120" />
-						<ColumnDefinition Width="180" />
-						<ColumnDefinition Width="300" />
-						<ColumnDefinition Width="75" />
-					</Grid.ColumnDefinitions>
-					<TextBlock Grid.Column="0" Text="Fecha" FontWeight="Bold" />
-					<TextBlock Grid.Column="1" Text="Asunto" FontWeight="Bold" />
-					<TextBlock Grid.Column="2" Text="Adjunto" FontWeight="Bold" />
-					<TextBlock Grid.Column="3" Text="Estado" FontWeight="Bold" />
-				</Grid>
-				<!-- ListBox -->
-				<ListBox Items="{Binding ResultE}"
-						 Margin="450,10,100,0" >
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="120" />
-									<ColumnDefinition Width="180" />
-									<ColumnDefinition Width="300" />
-									<ColumnDefinition Width="75" />
-								</Grid.ColumnDefinitions>
-								<TextBlock Grid.Column="0" Text="{Binding Date}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
-								<TextBlock Grid.Column="1" Text="{Binding Subject}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
-								<TextBlock Grid.Column="2" Text="{Binding Attached}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="10"/>
-								<TextBlock Grid.Column="3" Text="{Binding Status}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
-							</Grid>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-			</StackPanel>
-		</ScrollViewer>
-		<ListBox Items="{Binding ResultEmails}"
-				   Margin="60,90,1120,300"
-				   FontSize="11"
-				   FontWeight="Normal"
-				   IsEnabled="True"
-				   FontFamily="Montserrat"/>
-		<TextBlock Text="{Binding Greeting}"
-				   HorizontalAlignment="Center"
-				   VerticalAlignment="Top"
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<!-- Greeting -->
+			<RowDefinition Height="Auto"/>
+			<!-- Cabecera -->
+			<RowDefinition Height="2*"/>
+			<!-- ResultE -->
+			<RowDefinition Height="Auto"/>
+			<!-- LabelTittle -->
+			<RowDefinition Height="*"/>
+			<!-- ResultEmails -->
+			<RowDefinition Height="Auto"/>
+			<!-- Buttons -->
+		</Grid.RowDefinitions>
+
+		<!-- Greeting -->
+		<TextBlock Grid.Row="0"
+				   Text="{Binding Greeting}"
 				   FontSize="25"
 				   FontWeight="Medium"
 				   FontFamily="Montserrat"
-				   TextWrapping="Wrap"/>
-		<Button Content="{Binding ButtonAddEmail}"
-				Command="{Binding GoToSecondWindow}"
-				IsEnabled="True"
-				FontFamily="Segoe UI"
-				Margin="300,0,0,480"
-				Background="SeaGreen"/>
-		<Button Content="{Binding ButtonRead}"
-				Command="{Binding DownloadXmlAttachmentsCommand}"
-				FontFamily="Segoe UI"
-				Margin="300,0,0,380"
-				Background="SkyBlue"/> 
-	</Grid>
+				   TextAlignment="Center"/>
+ 
+		<!-- Cabecera --> 
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="2*" />
+				<ColumnDefinition Width="3*" />
+				<ColumnDefinition Width="5*" />
+				<ColumnDefinition Width="1*" />
+			</Grid.ColumnDefinitions>
+			<TextBlock Grid.Column="0" Text="Fecha" FontWeight="Bold" />
+			<TextBlock Grid.Column="1" Text="Asunto" FontWeight="Bold" />
+			<TextBlock Grid.Column="2" Text="Adjunto" FontWeight="Bold" />
+			<TextBlock Grid.Column="3" Text="Estado" FontWeight="Bold" />
+		</Grid>
+
+		<!-- ResultE -->
+		<ListBox Grid.Row="2" Items="{Binding ResultE}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="2*" />
+							<ColumnDefinition Width="3*" />
+							<ColumnDefinition Width="5*" />
+							<ColumnDefinition Width="1*" />
+						</Grid.ColumnDefinitions>
+						<TextBlock Grid.Column="0" Text="{Binding Date}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="1" Text="{Binding Subject}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="2" Text="{Binding Attached}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="10"/>
+						<TextBlock Grid.Column="3" Text="{Binding Status}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+
+
+		<!-- LabelTittle -->
+		<TextBlock Grid.Row="3"
+				   Text="{Binding LabelTittle}"
+				   FontSize="15"
+				   FontWeight="Medium"
+				   FontFamily="Montserrat"
+				   Margin="0,10"/>
+
+		<!-- ResultEmails -->
+		<ListBox Grid.Row="4"
+				 Items="{Binding ResultEmails}"
+				 FontSize="11"
+				 FontWeight="Normal"
+				 FontFamily="Montserrat"
+				 Width="300"
+				 HorizontalAlignment="Left"/>
+
+		<!-- Botones -->
+		<StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+			<Button Content="{Binding ButtonAddEmail}"
+					Command="{Binding GoToSecondWindow}"
+					IsEnabled="True"
+					FontFamily="Segoe UI"
+					Background="SeaGreen"
+					Margin="0 0 10 0"/>
+			<Button Content="{Binding ButtonRead}"
+					Command="{Binding DownloadXmlAttachmentsCommand}"
+					FontFamily="Segoe UI"
+					Background="SkyBlue"
+					Margin="0 0 0 0"/>
+		</StackPanel>
+
+	</Grid> 
 
 </Window>
