@@ -67,9 +67,9 @@ namespace EmailToSAPInvoice.Service
         {
             return database.Query<Rperfil>("SELECT U_CodPerfil, U_NombrePerfil, U_Trabaja FROM Rperfil").ToList();
         }
-        public List<Datas> GetAllCuenta()
+        public List<Rcuenta> GetAllCuenta()
         {
-            return database.Query<Datas>("SELECT *FROM Datas").ToList();
+            return database.Query<Rcuenta>("SELECT U_IdDocumento,U_CodPerfil,U_TipDoc,U_EXENTOpercent,U_IdTipoDoc,U_TipoCalc,U_IVApercent,U_IVAcuenta,U_ITpercent,U_ITcuenta,U_IUEpercent,U_IUEcuenta,U_RCIVApercent,U_RCIVAcuenta,U_CTAexento,U_TASA FROM Rcuenta").ToList();
         }
         public Rperfil InsertPerfil(string U_NombrePerfil, string U_Trabaja )
         {

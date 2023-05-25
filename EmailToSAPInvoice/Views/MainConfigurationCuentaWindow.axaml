@@ -27,7 +27,7 @@
 				<RowDefinition Height="Auto" />
 				<!-- Cabecera -->
 				<RowDefinition Height="Auto" />
-				<!-- ResultCeunta -->
+				<!-- ResultCuenta -->
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions> 
 
@@ -66,25 +66,9 @@
 					<ColumnDefinition Width="1*" />
 					<ColumnDefinition Width="2*" />
 				</Grid.ColumnDefinitions>
-
-				<TextBlock Grid.Column="0" Text="{Binding LabelPerfil}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
-				<ComboBox Grid.Column="1"
-					  Name="_uCodPerfil"
-					  FontSize="12"
-					  SelectedIndex="-1"
-					  BorderBrush="LightGray"
-					  BorderThickness="1"
-					  Padding="5"
-					  HorizontalAlignment="Stretch"
-					  VerticalAlignment="Center"
-					  Items="{Binding U_CodPerfil}"
-					  SelectedItem="{Binding SelectedCodPerfil, Mode=TwoWay}" /> 
 				
-				<TextBlock Grid.Column="2" Text="{Binding LabelDocumento}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
-				<TextBox Grid.Column="3" Name="_uTipDoc" Margin="0 0 10 0" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding U_TipDoc}"/>
-
-				<TextBlock Grid.Column="4" Text="{Binding LabelTipoDoc}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
-				<ComboBox Grid.Column="5"
+				<TextBlock Grid.Column="0" Text="{Binding LabelTipoDoc}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+				<ComboBox Grid.Column="1"
 					  Name="_uIdTipoDoc"
 					  FontSize="12"
 					  SelectedIndex="-1"
@@ -96,6 +80,22 @@
 					  Items="{Binding U_IdTipoDoc}"
 					  SelectedItem="{Binding SelectedTipoDoc, Mode=TwoWay}" />
 				
+				<TextBlock Grid.Column="2" Text="{Binding LabelPerfil}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+				<ComboBox Grid.Column="3"
+					  Name="_uCodPerfil"
+					  FontSize="12"
+					  SelectedIndex="-1"
+					  BorderBrush="LightGray"
+					  BorderThickness="1"
+					  Padding="5"
+					  HorizontalAlignment="Stretch"
+					  VerticalAlignment="Center"
+					  Items="{Binding U_CodPerfil}"
+					  SelectedItem="{Binding SelectedCodPerfil, Mode=TwoWay}" /> 
+				
+				<TextBlock Grid.Column="4" Text="{Binding LabelDocumento}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+				<TextBox Grid.Column="5" Name="_uTipDoc" Margin="0 0 10 0" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding U_TipDoc}"/>
+
 				<TextBlock Grid.Column="6" Text="{Binding LabelTipoCalculo}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
 				<ComboBox Grid.Column="7"
 					  Name= "_uTipoCalc"
@@ -128,25 +128,33 @@
 			<TextBox Grid.Column="1" Name="_uIVApercent" Margin="0 0 10 0" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding U_IVApercent}"/>
 
 			<TextBlock Grid.Column="2" Text="{Binding LabelCuentaIva}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
-			<ComboBox Grid.Column="3" Name="_uIVAcuenta" Margin="0 0 10 0" FontSize="12" SelectedIndex="-1"
-						  BorderBrush="LightGray" BorderThickness="1" Padding="5"
-						  HorizontalAlignment="Stretch" VerticalAlignment="Center" >
-				<ComboBoxItem Content="Opción 1" />
-				<ComboBoxItem Content="Opción 2" />
-				<ComboBoxItem Content="Opción 3" />
-			</ComboBox>
+			<ComboBox Grid.Column="3"
+					  Name="_uIVAcuenta"
+					  FontSize="12"
+					  SelectedIndex="-1"
+					  BorderBrush="LightGray"
+					  BorderThickness="1"
+					  Padding="5"
+					  HorizontalAlignment="Stretch"
+					  VerticalAlignment="Center"
+					  Items="{Binding NameConfig}"
+					  SelectedItem="{Binding SelectedIVAcuenta, Mode=TwoWay}" /> 
 			
 			<TextBlock Grid.Column="4" Text="{Binding LabelIt}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
 			<TextBox Grid.Column="5" Name="_uITpercent" Margin="0 0 10 0" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding U_ITpercent}"/>
 
-			<TextBlock Grid.Column="6" Text="{Binding LabelCuentaIt}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
-			<ComboBox Grid.Column="7" Name="_uITcuenta" Margin="0 0 10 0" FontSize="12" SelectedIndex="-1"
-						  BorderBrush="LightGray" BorderThickness="1" Padding="5"
-						  HorizontalAlignment="Stretch" VerticalAlignment="Center" >
-				<ComboBoxItem Content="Opción 1" />
-				<ComboBoxItem Content="Opción 2" />
-				<ComboBoxItem Content="Opción 3" />
-			</ComboBox> 
+			<TextBlock Grid.Column="6" Text="{Binding LabelCuentaIt}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" /> 
+			<ComboBox Grid.Column="7"
+					  Name="_uITcuenta"
+					  FontSize="12"
+					  SelectedIndex="-1"
+					  BorderBrush="LightGray"
+					  BorderThickness="1"
+					  Padding="5"
+					  HorizontalAlignment="Stretch"
+					  VerticalAlignment="Center"
+					  Items="{Binding NameConfig}"
+					  SelectedItem="{Binding SelectedITcuenta, Mode=TwoWay}" />  
 		</Grid> 
 
 		<!-- Tercera Fila -->
@@ -165,30 +173,37 @@
 			<TextBlock Grid.Column="0" Text="{Binding LabelIue}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
 			<TextBox Grid.Column="1" Name="_uIUEpercent" Margin="0 0 10 0" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding U_IUEpercent}"/>
 
-			<TextBlock Grid.Column="2" Text="{Binding LabelCuentaIue}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
-			<ComboBox Grid.Column="3" Name="_uIUEcuenta" Margin="0 0 10 0" FontSize="12" SelectedIndex="-1"
-									  BorderBrush="LightGray" BorderThickness="1" Padding="5"
-									  HorizontalAlignment="Stretch" VerticalAlignment="Center" >
-				<ComboBoxItem Content="Opción 1" />
-				<ComboBoxItem Content="Opción 2" />
-				<ComboBoxItem Content="Opción 3" />
-			</ComboBox>
-			
+			<TextBlock Grid.Column="2" Text="{Binding LabelCuentaIue}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" /> 
+			<ComboBox Grid.Column="3"
+					  Name="_uIUEcuenta"
+					  FontSize="12"
+					  SelectedIndex="-1"
+					  BorderBrush="LightGray"
+					  BorderThickness="1"
+					  Padding="5"
+					  HorizontalAlignment="Stretch"
+					  VerticalAlignment="Center"
+					  Items="{Binding NameConfig}"
+					  SelectedItem="{Binding SelectedIUEcuenta, Mode=TwoWay}" />
+
 			<TextBlock Grid.Column="4" Text="{Binding LabelRcIva}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
 			<TextBox Grid.Column="5" Name="_uRCIVApercent" Margin="0 0 10 0" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding U_RCIVApercent}"/>
 
-			<TextBlock Grid.Column="6" Text="{Binding LabelCuentaRcIva}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
-			<ComboBox Grid.Column="7" Name="_uRCIVAcuenta" Margin="0 0 10 0" FontSize="12" SelectedIndex="-1"
-							  BorderBrush="LightGray" BorderThickness="1" Padding="5"
-							  HorizontalAlignment="Stretch" VerticalAlignment="Center" >
-				<ComboBoxItem Content="Opción 1" />
-				<ComboBoxItem Content="Opción 2" />
-				<ComboBoxItem Content="Opción 3" />
-			</ComboBox>
+			<TextBlock Grid.Column="6" Text="{Binding LabelCuentaRcIva}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" /> 
+			<ComboBox Grid.Column="7"
+					  Name="_uRCIVAcuenta"
+					  FontSize="12"
+					  SelectedIndex="-1"
+					  BorderBrush="LightGray"
+					  BorderThickness="1"
+					  Padding="5"
+					  HorizontalAlignment="Stretch"
+					  VerticalAlignment="Center"
+					  Items="{Binding NameConfig}"
+					  SelectedItem="{Binding SelectedRCIVAcuenta, Mode=TwoWay}" /> 
 			
 		</Grid>
-
-
+ 
 		<!-- Cuarta Fila -->
 		<Grid Grid.Row="4" Margin="0 10">
 			<Grid.ColumnDefinitions>
@@ -205,15 +220,19 @@
 			<TextBlock Grid.Column="0" Text="{Binding LabelExento}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
 			<TextBox Grid.Column="1" Name="_uEXENTOpercent" Margin="0 0 10 0" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding U_EXENTOpercent}"/>
 
-			<TextBlock Grid.Column="2" Text="{Binding LabelCuentaExento}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
-			<ComboBox Grid.Column="3" Name="_uCTAexento" Margin="0 0 10 0" FontSize="12" SelectedIndex="-1"
-									  BorderBrush="LightGray" BorderThickness="1" Padding="5"
-									  HorizontalAlignment="Stretch" VerticalAlignment="Center" >
-				<ComboBoxItem Content="Opción 1" />
-				<ComboBoxItem Content="Opción 2" />
-				<ComboBoxItem Content="Opción 3" />
-			</ComboBox>
-			
+			<TextBlock Grid.Column="2" Text="{Binding LabelCuentaExento}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" /> 
+			<ComboBox Grid.Column="3"
+					  Name="_uCTAexento"
+					  FontSize="12"
+					  SelectedIndex="-1"
+					  BorderBrush="LightGray"
+					  BorderThickness="1"
+					  Padding="5"
+					  HorizontalAlignment="Stretch"
+					  VerticalAlignment="Center"
+					  Items="{Binding NameConfig}"
+					  SelectedItem="{Binding SelectedCTAexento, Mode=TwoWay}" />
+
 			<TextBlock Grid.Column="4" Text="{Binding LabelTasa}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
 			<TextBox Grid.Column="5" Name="_uTASA" Margin="0 0 10 0" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding U_TASA}" />
 		</Grid>
@@ -256,22 +275,78 @@
 				<ColumnDefinition Width="1*" />
 				<ColumnDefinition Width="1*" />
 				<ColumnDefinition Width="1*" />
-			</Grid.ColumnDefinitions>
-			<TextBlock Grid.Column="0" Text="Perfil" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
-			<TextBlock Grid.Column="1" Text="Documento" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
-			<TextBlock Grid.Column="2" Text="Tipo de Documento Sap" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
-			<TextBlock Grid.Column="3" Text="Tipo de Calculo" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
-			<TextBlock Grid.Column="4" Text="% IVA" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
-			<TextBlock Grid.Column="5" Text="cuenta IVA" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
-			<TextBlock Grid.Column="6" Text="% IT" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
-			<TextBlock Grid.Column="7" Text="Cuenta IT" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
-			<TextBlock Grid.Column="8" Text="% IUE" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
-			<TextBlock Grid.Column="9" Text="Cuenta IUE" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
-			<TextBlock Grid.Column="10" Text="% RC-IVA" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
-			<TextBlock Grid.Column="11" Text="cuenta RC-IVA" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
-			<TextBlock Grid.Column="12" Text="% Exento" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
-			<TextBlock Grid.Column="13" Text="Cuenta Excento" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
-			<TextBlock Grid.Column="14" Text="% Tasa" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+			</Grid.ColumnDefinitions>    
+			<TextBlock Grid.Column="0" Text="Id" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="1" Text="{Binding LabelTipoDoc}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="2" Text="{Binding LabelPerfil}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="3" Text="{Binding LabelDocumento}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="4" Text="{Binding LabelTipoCalculo}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="5" Text="{Binding LabelIva}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="6" Text="{Binding LabelCuentaIva}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="7" Text="{Binding LabelIt}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="8" Text="{Binding LabelCuentaIt}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="9" Text="{Binding LabelIue}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="10" Text="{Binding LabelCuentaIue}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="11" Text="{Binding LabelRcIva}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="12" Text="{Binding LabelCuentaRcIva}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="13" Text="{Binding LabelExento}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="14" Text="{Binding LabelCuentaExento}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="15" Text="{Binding LabelTasa}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="16" Text="Acciones" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+		</Grid>
+		<!-- ResultCuenta -->
+		<ListBox Grid.Row="7" Items="{Binding ResultCuenta}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" />
+						</Grid.ColumnDefinitions>
+						<TextBlock Grid.Column="0" Text="{Binding U_IdDocumento}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="1" Text="{Binding U_IdTipoDoc}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="2" Text="{Binding U_CodPerfil}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="3" Text="{Binding U_TipDoc}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="4" Text="{Binding U_TipoCalc}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="5" Text="{Binding U_IVApercent}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="6" Text="{Binding U_IVAcuenta}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="7" Text="{Binding U_ITpercent}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="8" Text="{Binding U_ITcuenta}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="9" Text="{Binding U_IUEpercent}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="10" Text="{Binding U_IUEcuenta}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="11" Text="{Binding U_RCIVApercent}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="12" Text="{Binding U_RCIVAcuenta}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="13" Text="{Binding U_EXENTOpercent}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="14" Text="{Binding U_CTAexento}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="15" Text="{Binding U_TASA}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+					</Grid> 
+					
+					
+					
+					
+					
+					 
+				</DataTemplate>  
+			</ListBox.ItemTemplate>
+		</ListBox>
+		<Grid Grid.Row="8">
 		</Grid>
 	</Grid>	 
 </Window>       

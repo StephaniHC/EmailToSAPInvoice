@@ -13,12 +13,15 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http; 
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 using static EmailToSAPInvoice.Models.Imbox;
+using static Org.BouncyCastle.Bcpg.Attr.ImageAttrib;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace EmailToSAPInvoice.Service
@@ -57,7 +60,7 @@ namespace EmailToSAPInvoice.Service
                 .Get<SapConfiguration>();
         }
 
-        public async Task ConnectToSAP(List<FacturaBase> listInvoiceXML)
+        /*public async Task ConnectToSAP1(List<FacturaBase> listInvoiceXML)
         {
             if (client == null)
             {
@@ -130,7 +133,97 @@ namespace EmailToSAPInvoice.Service
             {
                 Console.WriteLine($"Excepción al conectar a SAP: {e.Message}");
             }
+        }*/
+        public async Task<CancellationToken> ConnectToSAP()
+        { 
+            if (client == null)
+            {
+                throw new ObjectDisposedException(nameof(client), "El HttpClient ha sido eliminado");
+            }
+            var timeCancelation = new CancellationTokenSource(TimeSpan.FromMinutes(30));
+            try
+            {
+                var loginInfo = new
+                {
+                    UserName = config.UserName,
+                    Password = config.Password,
+                    CompanyDB = config.CompanyDB
+                };
+                var content = new StringContent(JsonConvert.SerializeObject(loginInfo), Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(config.Url + "Login", content, timeCancelation.Token);
+                if (response.IsSuccessStatusCode)
+                {
+                    var session = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
+                    client.DefaultRequestHeaders.Add("B1S-CaseInsensitive", "true");
+                    client.DefaultRequestHeaders.Add("Cookie", $"B1SESSION={session.SessionId}; ROUTEID={session.RouteId};");
+                    Console.Write("se conecto" + session);
+                    //solo por prueba para insertar factura-----------------
+                    var currencyRateJson = new
+                    {
+                        Currency = "USD",
+                        Rate = "6.96",
+                        RateDate = "20230522"
+                    };
+                    string jsonContent1 = JsonConvert.SerializeObject(currencyRateJson);
+                    HttpContent contentCurrencyRate = new StringContent(jsonContent1, Encoding.UTF8, "application/json");
+                    var response1 = await client.PostAsync(config.Url + "SBOBobService_SetCurrencyRate", contentCurrencyRate, timeCancelation.Token);
+                    if (!response1.IsSuccessStatusCode)
+                    {
+                        var errorResponse = await response1.Content.ReadAsStringAsync();
+                        var errorJson = JObject.Parse(errorResponse);
+                        var detailedErrorMessage = errorJson["error"]["message"]["value"].ToString();
+                        Console.WriteLine($"Error al actualizar la tasa de cambio: {detailedErrorMessage}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Tasa de cambio actualizada correctamente");
+                    }
+                    return timeCancelation.Token;
+                }
+                else
+                {
+                    Console.WriteLine($"Error al conectar a SAP: {response.StatusCode}");
+                    return new CancellationToken(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al conectar a SAP: {ex.Message}", ex);
+                return new CancellationToken(true);
+            }
         }
+        public async Task PostInvoiceToSAP(List<FacturaBase> listInvoiceXML)
+        {
+            Console.WriteLine("ingreso al post");
+            try
+            {
+                CancellationToken cancellationToken = await ConnectToSAP(); // Llama a ConnectToSAP y obtiene el token de cancelación
+                Console.WriteLine("Salio por aqui");
+                switch (config.TypeService)
+                {
+                    case 1:
+                        await NormalFunction(cancellationToken, listInvoiceXML);
+                        break;
+                    case 2:
+                        await ServiceFunction(cancellationToken, listInvoiceXML);
+                        break;
+                    case 3:
+                        await AccountingEntriesFunction(cancellationToken, listInvoiceXML);
+                        break;
+                    default:
+                        throw new Exception($"TypeService desconocido: {config.TypeService}");
+                }
+            }
+            catch (OperationCanceledException e)
+            {
+                Console.WriteLine($"La operación de reprocesamiento de facturas fue cancelada porque excedió el límite de tiempo: {e.Message}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Excepción al reprocesar facturas: {e.Message}");
+            }
+        }
+
         private async Task NormalFunction(CancellationToken cancellationToken, List<FacturaBase> listInvoiceXML)
         {
             foreach (var factura in listInvoiceXML)
@@ -142,7 +235,7 @@ namespace EmailToSAPInvoice.Service
                     {
                         (cardCode, string statusBusinessParther) = await CreateBusinessPartner(factura.cabecera.nitEmisor.ToString(), factura.cabecera.razonSocialEmisor, "S", factura.cabecera.nitEmisor.ToString(), cancellationToken);
                         if (string.IsNullOrEmpty(cardCode))
-                        { 
+                        {
                             databaseHandler.UpdateStatus(factura.identifier, Datas.StatusError, statusBusinessParther);
                             continue;
                         }
@@ -160,7 +253,7 @@ namespace EmailToSAPInvoice.Service
                             await PostProcessInvoiceItem(factura, cardCode, cancellationToken);
                         }
                         else
-                        { 
+                        {
                             await PostProcessInvoiceService(factura, cardCode, cancellationToken);
                         }
                     }
@@ -234,8 +327,8 @@ namespace EmailToSAPInvoice.Service
                             AccountCode = config.SAPAccountCodeCredito,
                             Credit = d.subTotal,
                             Debit = 0m  // El "m" hace que sea decimal 
-                        }).ToList(); 
-                        var totalFactura = factura.detalle?.Sum(d => d.subTotal) ?? 0; 
+                        }).ToList();
+                        var totalFactura = factura.detalle?.Sum(d => d.subTotal) ?? 0;
                         invoiceLines.Add(new
                         {
                             AccountCode = config.SAPAccountCodeDebito,
@@ -285,20 +378,20 @@ namespace EmailToSAPInvoice.Service
                         Quantity = ((XmlNode[])d.cantidad)[0]?.InnerText,
                         TaxCode = "IVA",
                         UnitPrice = d.precioUnitario.ToString(CultureInfo.InvariantCulture),
-                        PriceAfterVAT = d.subTotal.ToString(CultureInfo.InvariantCulture) 
+                        PriceAfterVAT = d.subTotal.ToString(CultureInfo.InvariantCulture)
                     }).ToList()
                 };
                 string jsonContent = JsonConvert.SerializeObject(invoiceJson);
                 Console.Write("esto serializo: " + jsonContent + "\n");
                 HttpContent contentInvoice = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                var insertResponse = await client.PostAsync(config.Url + "PurchaseInvoices", contentInvoice, cancellationToken); 
+                var insertResponse = await client.PostAsync(config.Url + "PurchaseInvoices", contentInvoice, cancellationToken);
                 if (insertResponse.IsSuccessStatusCode)
                 {
                     Console.WriteLine($"Se insertó factura: {insertResponse.StatusCode}");
                     databaseHandler.UpdateStatus(factura.identifier, Datas.StatusProcessed, $"Se insertó factura Item: {insertResponse.StatusCode}");
                 }
                 else
-                { 
+                {
                     var errorResponse = await insertResponse.Content.ReadAsStringAsync();
                     var errorJson = JObject.Parse(errorResponse);
                     var detailedErrorMessage = errorJson["error"]["message"]["value"].ToString();
@@ -325,7 +418,7 @@ namespace EmailToSAPInvoice.Service
                         ItemDescription = d.descripcion,
                         TaxCode = "IVA",
                         UnitPrice = d.precioUnitario.ToString(CultureInfo.InvariantCulture),
-                        PriceAfterVAT = d.subTotal.ToString(CultureInfo.InvariantCulture), 
+                        PriceAfterVAT = d.subTotal.ToString(CultureInfo.InvariantCulture),
                         AccountCode = config.SAPAccountCode
                     }).ToList()
                 };
@@ -389,38 +482,38 @@ namespace EmailToSAPInvoice.Service
                 statusMessage = $"Error inesperado: {ex.Message}";
                 Console.WriteLine(statusMessage);
                 return (false, string.Empty, statusMessage);
-            } 
+            }
         }
-        public async Task<(string ,string)> CreateBusinessPartner(string cardCode, string cardName, string cardType, string FederalTaxID, CancellationToken cancellationToken)
+        public async Task<(string, string)> CreateBusinessPartner(string cardCode, string cardName, string cardType, string FederalTaxID, CancellationToken cancellationToken)
         {
             string statusMessage;
             try
             {
                 var businessPartner = new
-                 {
+                {
                     CardCode = cardCode,
                     CardName = cardName,
                     CardType = cardType,
                     FederalTaxID = FederalTaxID
-                 };
-                 var json = JsonConvert.SerializeObject(businessPartner);
-                 var data = new StringContent(json, Encoding.UTF8, "application/json");
-                 var response = await client.PostAsync(config.Url + "BusinessPartners", data, cancellationToken);
-                 if (response.IsSuccessStatusCode)
-                 {
-                        var responseJson = await response.Content.ReadAsStringAsync();
-                        var responseObject = JsonConvert.DeserializeObject<dynamic>(responseJson);
-                        var createdCardCode = responseObject?.CardCode?.Value as string;
-                        statusMessage = $"Socio comercial {createdCardCode} creado exitosamente";
-                        Console.WriteLine(statusMessage);
-                        return (createdCardCode, statusMessage); 
-                 }
-                 else
-                 {
+                };
+                var json = JsonConvert.SerializeObject(businessPartner);
+                var data = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(config.Url + "BusinessPartners", data, cancellationToken);
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseJson = await response.Content.ReadAsStringAsync();
+                    var responseObject = JsonConvert.DeserializeObject<dynamic>(responseJson);
+                    var createdCardCode = responseObject?.CardCode?.Value as string;
+                    statusMessage = $"Socio comercial {createdCardCode} creado exitosamente";
+                    Console.WriteLine(statusMessage);
+                    return (createdCardCode, statusMessage);
+                }
+                else
+                {
                     statusMessage = $"Error al crear socio comercial: {response.StatusCode}";
                     Console.WriteLine(statusMessage);
-                    return (string.Empty, statusMessage); 
-                 }
+                    return (string.Empty, statusMessage);
+                }
             }
             catch (Exception ex)
             {
@@ -429,6 +522,64 @@ namespace EmailToSAPInvoice.Service
                 return (string.Empty, statusMessage);
             }
         }
+        public async Task<List<List<string>>> GetConfiguration()
+        {
+            List<List<string>> accountList = new List<List<string>>();
+
+            try
+            {
+                CancellationToken cancellationToken = await ConnectToSAP();
+                var response = await client.GetAsync(config.Url + "ChartOfAccounts", cancellationToken);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var chartOfAccountsData = JsonConvert.DeserializeObject<ChartOfAccountsData>(content);
+
+                    foreach (var account in chartOfAccountsData.Value)
+                    {
+                        List<string> accountData = new List<string>
+                {
+                    account.Code,
+                    account.FormatCode,
+                    account.Name
+                };
+
+                        accountList.Add(accountData);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Error al obtener la configuracion: {response.StatusCode}");
+                }
+            }
+            catch (OperationCanceledException e)
+            {
+                Console.WriteLine($"La operación de obtencion de configuraciones fue cancelada porque excedió el límite de tiempo: {e.Message}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Excepción al obtener la configuracion: {e.Message}");
+            }
+            Console.WriteLine("Antes de salir: " + accountList);
+            return accountList;
+        }
+
+
+        // Clase para deserializar el JSON de ChartOfAccounts
+        public class ChartOfAccountsData
+        {
+            public List<Account> Value { get; set; }
+        }
+
+        public class Account
+        {
+            public string Code { get; set; }
+            public string FormatCode { get; set; }
+            public string Name { get; set; }
+        }
+
+
 
         public void Dispose()
         {
@@ -436,4 +587,4 @@ namespace EmailToSAPInvoice.Service
             client?.Dispose();
         }
     }
-} 
+}

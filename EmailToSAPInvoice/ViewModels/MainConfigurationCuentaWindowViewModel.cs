@@ -1,14 +1,20 @@
 ﻿
 using Avalonia.Controls;
 using Avalonia.Layout;
+using Avalonia.Media;
+using DynamicData;
 using EmailToSAPInvoice.Service;
 using EmailToSAPInvoice.Service.Table;
 using EmailToSAPInvoice.Views;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml.Linq;
+using static EmailToSAPInvoice.ViewModels.MainConfigurationPerfilWindowViewModel;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace EmailToSAPInvoice.ViewModels
 { 
@@ -18,16 +24,16 @@ namespace EmailToSAPInvoice.ViewModels
         public string LabelPerfil => "Perfil";
         public string LabelIva => "% IVA";
         public string LabelIue => "% IUE";
-        public string LabelExento => "(2)% Exento";
+        public string LabelExento => "% Exento";
         public string LabelDocumento => "Documento";
         public string LabelCuentaIva => "Cuenta IVA";
         public string LabelCuentaIue => "Cuenta IUE";
         public string LabelCuentaExento => "Cuenta Exento";
-        public string LabelTipoDoc => "Tipo Doc SAP";
+        public string LabelTipoDoc => "Tipo de Documento SAP";
         public string LabelIt => "% IT";
         public string LabelRcIva => "% RC-IVA";
-        public string LabelTasa => "(2)% Tasa";
-        public string LabelTipoCalculo => "(1) Tipo de Calculo";
+        public string LabelTasa => "% Tasa";
+        public string LabelTipoCalculo => "Tipo de Calculo";
         public string LabelCuentaIt => "Cuenta IT";
         public string LabelCuentaRcIva => "Cuenta RC-IVA";
         public string Button => "Añadir Cuenta";
@@ -42,13 +48,7 @@ namespace EmailToSAPInvoice.ViewModels
         public decimal _uTASA;
         private List<string> _uCodPerfil;
         private List<string> _uIdTipoDoc;
-        private List<string> _uTipoCalc;
-        private List<string> _uIVAcuenta;
-        private List<string> _uITcuenta;
-        private List<string> _uIUEcuenta;
-        private List<string> _uRCIVAcuenta;
-        private List<string> _uCTAexento;
-
+        private List<string> _uTipoCalc; 
 
         private string _selectedCodPerfil; 
         private string _selectedTipoDoc;
@@ -148,15 +148,6 @@ namespace EmailToSAPInvoice.ViewModels
                 this.RaisePropertyChanged(nameof(U_IdTipoDoc));
             }
         }  
-        public List<string> U_IVAcuenta
-        {
-            get { return _uIVAcuenta; }
-            set
-            {
-                _uIVAcuenta = value;
-                this.RaisePropertyChanged(nameof(U_IVAcuenta));
-            }
-        }
         public string SelectedIVAcuenta
         {
             get { return _selectedIVAcuenta; }
@@ -175,18 +166,6 @@ namespace EmailToSAPInvoice.ViewModels
                 {
                     _uITpercent = value;
                     OnPropertyChanged(nameof(U_ITpercent));
-                }
-            }
-        } 
-        public List<string> U_ITcuenta
-        {
-            get { return _uITcuenta; }
-            set
-            {
-                if (_uITcuenta != value)
-                {
-                    _uITcuenta = value;
-                    OnPropertyChanged(nameof(U_ITcuenta));
                 }
             }
         } 
@@ -211,18 +190,6 @@ namespace EmailToSAPInvoice.ViewModels
                 }
             }
         } 
-        public List<string> U_IUEcuenta
-        {
-            get { return _uIUEcuenta; }
-            set
-            {
-                if (_uIUEcuenta != value)
-                {
-                    _uIUEcuenta = value;
-                    OnPropertyChanged(nameof(U_IUEcuenta));
-                }
-            }
-        } 
         public string SelectedIUEcuenta
         {
             get { return _selectedIUEcuenta; }
@@ -244,18 +211,6 @@ namespace EmailToSAPInvoice.ViewModels
                 }
             }
         } 
-        public List<string> U_RCIVAcuenta
-        {
-            get { return _uRCIVAcuenta; }
-            set
-            {
-                if (_uRCIVAcuenta != value)
-                {
-                    _uRCIVAcuenta = value;
-                    OnPropertyChanged(nameof(U_RCIVAcuenta));
-                }
-            }
-        } 
         public string SelectedRCIVAcuenta
         {
             get { return _selectedRCIVAcuenta; }
@@ -265,18 +220,6 @@ namespace EmailToSAPInvoice.ViewModels
                 this.RaisePropertyChanged(nameof(_selectedRCIVAcuenta));
             }
         } 
-        public List<string> U_CTAexento
-        {
-            get { return _uCTAexento; }
-            set
-            {
-                if (_uCTAexento != value)
-                {
-                    _uCTAexento = value;
-                    OnPropertyChanged(nameof(U_CTAexento));
-                }
-            }
-        }
         public string SelectedCTAexento
         {
             get { return _selectedCTAexento; }
@@ -304,6 +247,36 @@ namespace EmailToSAPInvoice.ViewModels
         public event EventHandler CloseWindow; 
         private DatabaseHandler databaseHandler = new DatabaseHandler();
 
+        private ObservableCollection<CuentaResult> _resultCuenta;
+        public ObservableCollection<CuentaResult> ResultCuenta
+        {
+            get { return _resultCuenta; }
+            set
+            {
+                _resultCuenta = value;
+            }
+        }
+
+        private SAPServiceLayerConnection sapService;
+
+        List<List<string>> U_config;
+        List<string> Code; 
+        public string _selected;
+        private ObservableCollection<string> _nameconfig;
+        public ObservableCollection<string> NameConfig
+        {
+            get { return _nameconfig; }
+            set
+            {
+                if (_nameconfig != value)
+                {
+                    _nameconfig = value;
+                    OnPropertyChanged(nameof(NameConfig));
+                }
+            }
+        }
+        private Dictionary<string, string> nameToCode;
+        private Dictionary<string, string> nameToFormatCode;
         public MainConfigurationCuentaWindowViewModel()
         {
             GoToConfigPerfilWindow = ReactiveCommand.Create(() =>
@@ -321,10 +294,19 @@ namespace EmailToSAPInvoice.ViewModels
             {
                 Rcuenta.TipoCalculoUp,
                 Rcuenta.TipoCalculoDown
-            };
+            }; 
+            nameToCode = new Dictionary<string, string>();
+            nameToFormatCode = new Dictionary<string, string>();
             U_CodPerfil = new List<string>();
+            ResultCuenta = new ObservableCollection<CuentaResult>(); 
+            U_config = new List<List<string>>();
+            Code = new List<string>();
+            NameConfig = new ObservableCollection<string>() { null };
             GetPerfiles();
-        }
+            GetData();
+            _ = GetConfigurationCuentasAsync();
+        } 
+
         private void GetPerfiles()
         {
             var perfiles = databaseHandler.GetAllPerfil();
@@ -339,10 +321,63 @@ namespace EmailToSAPInvoice.ViewModels
         {
             CloseWindow?.Invoke(this, EventArgs.Empty);
         }
-        private void PostCuenta() {
+
+        public async Task GetConfigurationCuentasAsync()
+        {
             try
             {
-               // databaseHandler.InsertCuenta(SelectedCodPerfil, SelectedTipoDoc, );
+                sapService = new SAPServiceLayerConnection();
+                U_config = await sapService.GetConfiguration(); 
+                foreach (List<string> accountData in U_config)
+                {
+                    string code = accountData[0];
+                    string name = accountData[1] + " - " + accountData[2]; 
+                    Code.Add(code);
+                    NameConfig.Add(name); 
+                    nameToCode.Add(name, code);
+                    nameToFormatCode[name] = accountData[1];
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Excepción al obtener la configuracion de cuentas: {e.Message}");
+            }
+        }
+
+        private void PostCuenta()
+        {
+            try
+            {
+                string selectedIVAcuentaCode = null;
+                string selectedITcuentaCode = null;
+                string selectedIUEcuentaCode = null;
+                string selectedRCIVAcuentaCode = null;
+                string selectedCTAexentoCode = null;
+
+                if (SelectedIVAcuenta != null)
+                {
+                    selectedIVAcuentaCode = nameToFormatCode[SelectedIVAcuenta];
+                }
+                if (SelectedITcuenta != null)
+                {
+                    selectedITcuentaCode = nameToFormatCode[SelectedITcuenta];
+                }
+                if (SelectedIUEcuenta != null)
+                {
+                    selectedIUEcuentaCode = nameToFormatCode[SelectedIUEcuenta];
+                }
+                if (SelectedRCIVAcuenta != null)
+                {
+                    selectedRCIVAcuentaCode = nameToFormatCode[SelectedRCIVAcuenta];
+                }
+                if (SelectedCTAexento != null)
+                {
+                    selectedCTAexentoCode = nameToFormatCode[SelectedCTAexento];
+                }
+
+                _ = databaseHandler.InsertCuenta(SelectedCodPerfil, _uTipDoc, _uEXENTOpercent, SelectedTipoDoc, SelectedTipoCalc, _uIVApercent,
+                                        selectedIVAcuentaCode, _uITpercent, selectedITcuentaCode, _uIUEpercent, selectedIUEcuentaCode,
+                                        _uRCIVApercent, selectedRCIVAcuentaCode, selectedCTAexentoCode, _uTASA);
                 CloseWindow?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception ex)
@@ -350,6 +385,54 @@ namespace EmailToSAPInvoice.ViewModels
                 Console.WriteLine(ex.Message);
             }
         }
-    }
 
+
+        public class CuentaResult
+        {
+            public string U_IdDocumento { get; set; }
+            public string U_CodPerfil { get; set; }
+            public string U_TipDoc { get; set; }
+            public string U_EXENTOpercent { get; set; }
+            public string U_IdTipoDoc { get; set; }
+            public string U_TipoCalc { get; set; }
+            public string U_IVApercent { get; set; }
+            public string U_IVAcuenta { get; set; }
+            public string U_ITpercent { get; set; }
+            public string U_ITcuenta { get; set; }
+            public string U_IUEpercent { get; set; }
+            public string U_IUEcuenta { get; set; }
+            public string U_RCIVApercent { get; set; }
+            public string U_RCIVAcuenta { get; set; }
+            public string U_CTAexento { get; set; }
+            public string U_TASA { get; set; }
+        }
+        private void GetData()
+        {
+            var cuenta = databaseHandler.GetAllCuenta();
+            foreach (Rcuenta cuentas in cuenta)
+            {
+                var resultado = new CuentaResult
+                {
+                    U_IdDocumento = cuentas.U_IdDocumento.ToString(),
+                    U_CodPerfil = cuentas.U_CodPerfil,
+                    U_TipDoc = cuentas.U_TipDoc,
+                    U_EXENTOpercent = cuentas.U_EXENTOpercent.ToString(),
+                    U_IdTipoDoc = cuentas.U_IdTipoDoc,
+                    U_TipoCalc = cuentas.U_TipoCalc,
+                    U_IVApercent = cuentas.U_IVApercent.ToString(),
+                    U_IVAcuenta = cuentas.U_IVAcuenta,
+                    U_ITpercent = cuentas.U_ITpercent.ToString(),
+                    U_ITcuenta = cuentas.U_ITcuenta,
+                    U_IUEpercent = cuentas.U_IUEpercent.ToString(),
+                    U_IUEcuenta = cuentas.U_IUEcuenta,
+                    U_RCIVApercent = cuentas.U_RCIVApercent.ToString(),
+                    U_RCIVAcuenta = cuentas.U_RCIVAcuenta,
+                    U_CTAexento = cuentas.U_CTAexento,
+                    U_TASA = cuentas.U_TASA.ToString()
+
+                };
+                ResultCuenta.Add(resultado);
+            }
+        }
+    }
 }

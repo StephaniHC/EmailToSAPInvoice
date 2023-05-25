@@ -19,6 +19,7 @@ using EmailToSAPInvoice.Views;
 using System.Xml.Serialization;
 using DynamicData;
 using MailKit.Search;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace EmailToSAPInvoice.ViewModels
 {
@@ -320,25 +321,7 @@ namespace EmailToSAPInvoice.ViewModels
                 Console.WriteLine("Método desconocido \n");
                 return;
             }
-        }
-        private List<string> CargarMensajesLeidos()
-        {
-            var filePath = "mensajes_leidos.txt";
-            if (File.Exists(filePath))
-            {
-                return File.ReadAllLines(filePath).ToList();
-            }
-            else
-            {
-                return new List<string>();
-            }
-        }
-        private void GuardarMensajesLeidos(List<string> mensajesLeidos)
-        {
-            var filePath = "mensajes_leidos.txt";
-            File.WriteAllLines(filePath, mensajesLeidos);
-        }
-
+        } 
         public void GetDataInvoice()
         {
             sapService = new SAPServiceLayerConnection();
@@ -360,7 +343,23 @@ namespace EmailToSAPInvoice.ViewModels
                     } 
                 }
             }
-            sapService.ConnectToSAP(listInvoice).GetAwaiter().GetResult();
+            sapService.PostInvoiceToSAP(listInvoice).GetAwaiter().GetResult(); 
+        }
+        public void pruebas()
+        {
+            List<List<string>> U_config = new List<List<string>>();
+            Console.Write("ingresoooo");
+            sapService = new SAPServiceLayerConnection();
+            U_config = sapService.GetConfiguration().Result;
+            Console.WriteLine("Es esto: " + U_config);
+            foreach (List<string> accountData in U_config)
+            {
+                foreach (string value in accountData)
+                {
+                    Console.WriteLine(value);
+                }
+                Console.WriteLine(); // Agrega una línea en blanco entre las listas internas
+            }
         }
         public FacturaBase ReadFile(int emailId, string archivo)
         {
