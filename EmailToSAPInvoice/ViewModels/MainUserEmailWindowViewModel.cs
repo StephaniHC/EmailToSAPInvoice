@@ -50,8 +50,8 @@ namespace EmailToSAPInvoice.ViewModels
         {
             GoToFloatingWindow = ReactiveCommand.Create(() =>
             {
-                var userEmailWindow = new MainUserEmailWindow();
-                userEmailWindow.Show();
+                var userProviderWindow = new MainProviderWindow();
+                userProviderWindow.Show();
             });
             GetListaProveedores();
         }

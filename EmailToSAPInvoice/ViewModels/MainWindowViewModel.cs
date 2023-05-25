@@ -67,11 +67,12 @@ namespace EmailToSAPInvoice.ViewModels
             Rutas = new Route();
             databaseHandler = new DatabaseHandler();
             ResultE = new ObservableCollection<EmailResult>();
-            GetData();listInvoice = new List<FacturaBase>();
+            GetData();
+            listInvoice = new List<FacturaBase>();
             GoToConfigWindow = ReactiveCommand.Create(() =>
             {
-                var configurationWindow = new MainConfigurationWindow();
-                configurationWindow.Show();
+                var configurationCuentaWindow = new MainConfigurationCuentaWindow();
+                configurationCuentaWindow.Show();
             });
         }
 
@@ -110,6 +111,24 @@ namespace EmailToSAPInvoice.ViewModels
         private void GetData()
         {
             var datas = databaseHandler.GetAllDatasEmail();
+            foreach (Datas datasc in datas)
+            {
+                DateTime fechaHora = DateTime.Parse(datasc.Date);
+                string fechaFormateada = fechaHora.ToString("M/d/yyyy HH:mm:ss");
+                var resultado = new EmailResult
+                {
+                    Date = fechaFormateada,
+                    Subject = datasc.Subject,
+                    Attached = datasc.Attached,
+                    Status = datasc.Status
+                };
+                ResultE.Add(resultado);
+            }
+        }
+        private void GetDataUpdate()
+        {
+            var datas = databaseHandler.GetAllDatasEmail();
+            ResultE.Clear();
             foreach (Datas datasc in datas)
             {
                 DateTime fechaHora = DateTime.Parse(datasc.Date);
@@ -197,21 +216,43 @@ namespace EmailToSAPInvoice.ViewModels
                     }
                     client.Disconnect(true);
                 }
+
+                GetDataUpdate();
             }
             else if (metodo.ToLower() == "imap")
             {
                 using (var client = new ImapClient())
                 {
                     client.Connect(url, puerto, true);
-                    client.Authenticate(email, password);
-
-                    client.Inbox.Open(FolderAccess.ReadWrite); // Abrir la bandeja de entrada en modo de lectura y escritura
-
-                    var uids = client.Inbox.Search(SearchQuery.All);
-
-                    foreach (var uid in uids.Reverse())
+                    client.Authenticate(email, password); 
+                    // Intentar obtener la carpeta 'Processed'.
+                    var personalNamespaces = client.GetFolder(client.PersonalNamespaces[0]);
+                    IMailFolder processedFolder = null;
+                    try
                     {
-                        var message = client.Inbox.GetMessage(uid);
+                        processedFolder = personalNamespaces.GetSubfolder("Processed");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"No se pudo obtener la carpeta 'Processed'. Error: {ex.Message}");
+                    } 
+                    // Crear una carpeta 'Processed' si no existe.
+                    if (processedFolder == null)
+                    {
+                        try
+                        {
+                            processedFolder = personalNamespaces.Create("Processed", true);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"No se pudo crear la carpeta 'Processed'. Error: {ex.Message}");
+                        }
+                    }
+
+                    client.Inbox.Open(FolderAccess.ReadWrite);
+                    for (int i = client.Inbox.Count - 1; i >= 0; i--)
+                    {
+                        var message = client.Inbox.GetMessage(i);
                         if (message.Attachments.OfType<MimePart>().Any(x => x.FileName.EndsWith(".xml")))
                         {
                             foreach (var attachment in message.Attachments.OfType<MimePart>().Where(x => x.FileName.EndsWith(".xml")))
@@ -231,24 +272,15 @@ namespace EmailToSAPInvoice.ViewModels
                                 }
                                 var finalFileName = count > 0 ? $"{fileNameWithoutExtension}({count}){extension}" : $"{fileNameWithoutExtension}{extension}";
                                 databaseHandler.InsertData(message.Date.ToString(), message.Subject, finalFileName);
-
-                                // Verificar si los mensajes se están marcando correctamente como leídos en el servidor IMAP
-                                try
-                                {
-                                    client.Inbox.AddFlags(uid, MessageFlags.Seen, true);
-                                    Console.WriteLine($"Mensaje marcado como leído - UID: {uid}");
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine($"Error al marcar el mensaje como leído - UID: {uid}");
-                                    Console.WriteLine(ex.Message);
-                                }
                             }
+                            // Mover el mensaje a la carpeta de procesados solo si contiene un archivo XML adjunto
+                            client.Inbox.MoveTo(i, processedFolder);
                         }
                     }
-
                     client.Disconnect(true);
                 } 
+                GetDataUpdate();
+
                 /* ORIGINAL
                 using (var client = new ImapClient())
                 {
@@ -288,6 +320,23 @@ namespace EmailToSAPInvoice.ViewModels
                 Console.WriteLine("Método desconocido \n");
                 return;
             }
+        }
+        private List<string> CargarMensajesLeidos()
+        {
+            var filePath = "mensajes_leidos.txt";
+            if (File.Exists(filePath))
+            {
+                return File.ReadAllLines(filePath).ToList();
+            }
+            else
+            {
+                return new List<string>();
+            }
+        }
+        private void GuardarMensajesLeidos(List<string> mensajesLeidos)
+        {
+            var filePath = "mensajes_leidos.txt";
+            File.WriteAllLines(filePath, mensajesLeidos);
         }
 
         public void GetDataInvoice()

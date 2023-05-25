@@ -1,0 +1,120 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:EmailToSAPInvoice.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="250"
+        x:Class="EmailToSAPInvoice.Views.MainConfigurationPerfilWindow"
+        Title="Configuración de Perfil">
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+		<vm:MainConfigurationPerfilWindowViewModel/>
+	</Design.DataContext>
+	<Grid Margin="15">
+		<Grid.RowDefinitions>
+			<!-- Greeting -->
+			<RowDefinition Height="Auto" />
+			<!-- Primera Fila -->
+			<RowDefinition Height="Auto" />
+			<!-- Segunda Fila -->
+			<RowDefinition Height="Auto" />
+			<!-- Buttons -->
+			<RowDefinition Height="Auto" />
+			<!-- Cabecera -->
+			<RowDefinition Height="Auto" />
+			<!-- ResultPerfil -->
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<!-- Greeting -->
+		<TextBlock Grid.Row="0"
+					  Text="{Binding Greeting}"
+					  FontSize="18"
+					  FontWeight="Medium"
+					  FontFamily="Montserrat"
+					  TextAlignment="Center" />
+
+		<!-- Primera Fila -->
+		<Grid Grid.Row="1" Margin="0 10">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="2*" />
+			</Grid.ColumnDefinitions>
+
+			<TextBlock Grid.Column="0" Text="{Binding LabelPerfil}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" /> 
+			<TextBox Grid.Column="1" Name="_perfil" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding Perfil}"/>
+
+		</Grid>
+
+		<!-- Segunda Fila -->
+		<Grid Grid.Row="2" Margin="0 10">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="2*" />
+			</Grid.ColumnDefinitions>
+			<TextBlock Grid.Column="0" Text="{Binding LabelUTrabaja}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			   
+			<ComboBox Grid.Column="1"
+					  Name="_utrabaja"
+					  FontSize="12"
+					  SelectedIndex="-1"
+					  BorderBrush="LightGray"
+					  BorderThickness="1"
+					  Padding="5"
+					  HorizontalAlignment="Stretch"
+					  VerticalAlignment="Center"
+					  Items="{Binding PerfilTrabaja}"
+					  SelectedItem="{Binding SelectedPerfilTrabaja, Mode=TwoWay}" />
+
+		</Grid>
+		<!-- Buttons -->
+		<Grid Grid.Row="3">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<Button Grid.Column="1"
+					Content="{Binding ButtonBack}"
+					FontFamily="Segoe UI"
+					Margin="0 0 10 0"
+					Command="{Binding BackCommand}"/>
+			<Button Grid.Column="2"
+					Content="{Binding Button}"
+					IsEnabled="True"
+					FontFamily="Segoe UI"
+					Background="SeaGreen"
+					Margin="0 0 10 0"
+					Command="{Binding SaveCommandPerfil}"/> 
+		</Grid>
+		<!-- Cabecera -->
+		<Grid Grid.Row="4">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="3*" />
+				<ColumnDefinition Width="2*" />
+			</Grid.ColumnDefinitions>
+			<TextBlock Grid.Column="0" Text="Codigo Perfil" FontWeight="Bold" FontSize="12"/>
+			<TextBlock Grid.Column="1" Text="Nombre Perfil" FontWeight="Bold" FontSize="12"/>
+			<TextBlock Grid.Column="2" Text="Moneda en Uso" FontWeight="Bold" FontSize="12"/>
+		</Grid>
+		<!-- ResultPerfil -->
+		<ListBox Grid.Row="5" Items="{Binding ResultPerfil}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="3*" />
+							<ColumnDefinition Width="2*" />
+						</Grid.ColumnDefinitions>
+						<TextBlock Grid.Column="0" Text="{Binding U_CodPerfil}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="1" Text="{Binding U_NombrePerfil}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="2" Text="{Binding U_Trabaja}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="10"/>
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</Grid>
+</Window>

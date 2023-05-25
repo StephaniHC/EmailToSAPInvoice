@@ -25,7 +25,7 @@ namespace ServiceEmail
         {
             var mainWindowViewModel = new MainWindowViewModel();
             Console.WriteLine("------------------------una vuelta----------------------------");
-            mainWindowViewModel.GetDataInvoice();
+            mainWindowViewModel.SetAttachments();
         }
     }
 }

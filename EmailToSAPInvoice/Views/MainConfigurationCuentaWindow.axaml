@@ -1,0 +1,277 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:EmailToSAPInvoice.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="EmailToSAPInvoice.Views.MainConfigurationCuentaWindow"
+        Title="Configuración de Documentos">
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+		<vm:MainConfigurationCuentaWindowViewModel/>
+	</Design.DataContext> 
+	<Grid Margin="15"> 
+			<Grid.RowDefinitions>
+				<!-- Greeting -->
+				<RowDefinition Height="Auto" />
+				<!-- Primera Fila -->
+				<RowDefinition Height="Auto" />
+				<!-- Segunda Fila -->
+				<RowDefinition Height="Auto" />
+				<!-- Tercera Fila -->
+				<RowDefinition Height="Auto" />
+				<!-- Cuarta Fila -->
+				<RowDefinition Height="Auto" />
+				<!-- Buttons -->
+				<RowDefinition Height="Auto" />
+				<!-- Cabecera -->
+				<RowDefinition Height="Auto" />
+				<!-- ResultCeunta -->
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions> 
+
+			<!-- Greeting -->
+			<Grid Grid.Row="0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+
+				<TextBlock Grid.Column="0"
+						   Text="{Binding Greeting}"
+						   FontSize="18"
+						   FontWeight="Medium"
+						   FontFamily="Montserrat"
+						   TextAlignment="Center" />
+
+				<Button Grid.Column="1"
+						Content="Añadir Perfil" 
+						Command="{Binding GoToConfigPerfilWindow}"
+						IsEnabled="True"
+						FontFamily="Segoe UI"
+						Background="SkyBlue"
+						Margin="10 0 0 0" />
+			</Grid>
+
+			<!-- Primera Fila -->
+			<Grid Grid.Row="1" Margin="0 10">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="1*" />
+					<ColumnDefinition Width="2*" />
+					<ColumnDefinition Width="1*" />
+					<ColumnDefinition Width="2*" />
+					<ColumnDefinition Width="1*" />
+					<ColumnDefinition Width="2*" />
+					<ColumnDefinition Width="1*" />
+					<ColumnDefinition Width="2*" />
+				</Grid.ColumnDefinitions>
+
+				<TextBlock Grid.Column="0" Text="{Binding LabelPerfil}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+				<ComboBox Grid.Column="1"
+					  Name="_uCodPerfil"
+					  FontSize="12"
+					  SelectedIndex="-1"
+					  BorderBrush="LightGray"
+					  BorderThickness="1"
+					  Padding="5"
+					  HorizontalAlignment="Stretch"
+					  VerticalAlignment="Center"
+					  Items="{Binding U_CodPerfil}"
+					  SelectedItem="{Binding SelectedCodPerfil, Mode=TwoWay}" /> 
+				
+				<TextBlock Grid.Column="2" Text="{Binding LabelDocumento}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+				<TextBox Grid.Column="3" Name="_uTipDoc" Margin="0 0 10 0" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding U_TipDoc}"/>
+
+				<TextBlock Grid.Column="4" Text="{Binding LabelTipoDoc}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+				<ComboBox Grid.Column="5"
+					  Name="_uIdTipoDoc"
+					  FontSize="12"
+					  SelectedIndex="-1"
+					  BorderBrush="LightGray"
+					  BorderThickness="1"
+					  Padding="5"
+					  HorizontalAlignment="Stretch"
+					  VerticalAlignment="Center"
+					  Items="{Binding U_IdTipoDoc}"
+					  SelectedItem="{Binding SelectedTipoDoc, Mode=TwoWay}" />
+				
+				<TextBlock Grid.Column="6" Text="{Binding LabelTipoCalculo}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+				<ComboBox Grid.Column="7"
+					  Name= "_uTipoCalc"
+                      FontSize= "12"
+                      SelectedIndex= "-1"
+                      BorderBrush= "LightGray"
+                      BorderThickness= "1"
+                      Padding= "5"
+                      HorizontalAlignment= "Stretch"
+                      VerticalAlignment= "Center"
+                      Items= "{Binding U_TipoCalc}"
+                      SelectedItem= "{Binding SelectedTipoCalc, Mode=TwoWay}" />
+				
+			</Grid>
+
+		<!-- Segunda Fila -->
+		<Grid Grid.Row="2" Margin="0 10">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="2*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="2*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="2*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="2*" />
+			</Grid.ColumnDefinitions>
+
+			<TextBlock Grid.Column="0" Text="{Binding LabelIva}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			<TextBox Grid.Column="1" Name="_uIVApercent" Margin="0 0 10 0" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding U_IVApercent}"/>
+
+			<TextBlock Grid.Column="2" Text="{Binding LabelCuentaIva}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			<ComboBox Grid.Column="3" Name="_uIVAcuenta" Margin="0 0 10 0" FontSize="12" SelectedIndex="-1"
+						  BorderBrush="LightGray" BorderThickness="1" Padding="5"
+						  HorizontalAlignment="Stretch" VerticalAlignment="Center" >
+				<ComboBoxItem Content="Opción 1" />
+				<ComboBoxItem Content="Opción 2" />
+				<ComboBoxItem Content="Opción 3" />
+			</ComboBox>
+			
+			<TextBlock Grid.Column="4" Text="{Binding LabelIt}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			<TextBox Grid.Column="5" Name="_uITpercent" Margin="0 0 10 0" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding U_ITpercent}"/>
+
+			<TextBlock Grid.Column="6" Text="{Binding LabelCuentaIt}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			<ComboBox Grid.Column="7" Name="_uITcuenta" Margin="0 0 10 0" FontSize="12" SelectedIndex="-1"
+						  BorderBrush="LightGray" BorderThickness="1" Padding="5"
+						  HorizontalAlignment="Stretch" VerticalAlignment="Center" >
+				<ComboBoxItem Content="Opción 1" />
+				<ComboBoxItem Content="Opción 2" />
+				<ComboBoxItem Content="Opción 3" />
+			</ComboBox> 
+		</Grid> 
+
+		<!-- Tercera Fila -->
+		<Grid Grid.Row="3" Margin="0 10">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="2*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="2*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="2*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="2*" />
+			</Grid.ColumnDefinitions>
+
+			<TextBlock Grid.Column="0" Text="{Binding LabelIue}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			<TextBox Grid.Column="1" Name="_uIUEpercent" Margin="0 0 10 0" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding U_IUEpercent}"/>
+
+			<TextBlock Grid.Column="2" Text="{Binding LabelCuentaIue}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			<ComboBox Grid.Column="3" Name="_uIUEcuenta" Margin="0 0 10 0" FontSize="12" SelectedIndex="-1"
+									  BorderBrush="LightGray" BorderThickness="1" Padding="5"
+									  HorizontalAlignment="Stretch" VerticalAlignment="Center" >
+				<ComboBoxItem Content="Opción 1" />
+				<ComboBoxItem Content="Opción 2" />
+				<ComboBoxItem Content="Opción 3" />
+			</ComboBox>
+			
+			<TextBlock Grid.Column="4" Text="{Binding LabelRcIva}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			<TextBox Grid.Column="5" Name="_uRCIVApercent" Margin="0 0 10 0" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding U_RCIVApercent}"/>
+
+			<TextBlock Grid.Column="6" Text="{Binding LabelCuentaRcIva}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			<ComboBox Grid.Column="7" Name="_uRCIVAcuenta" Margin="0 0 10 0" FontSize="12" SelectedIndex="-1"
+							  BorderBrush="LightGray" BorderThickness="1" Padding="5"
+							  HorizontalAlignment="Stretch" VerticalAlignment="Center" >
+				<ComboBoxItem Content="Opción 1" />
+				<ComboBoxItem Content="Opción 2" />
+				<ComboBoxItem Content="Opción 3" />
+			</ComboBox>
+			
+		</Grid>
+
+
+		<!-- Cuarta Fila -->
+		<Grid Grid.Row="4" Margin="0 10">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="2*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="2*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="2*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="2*" />
+			</Grid.ColumnDefinitions>
+
+			<TextBlock Grid.Column="0" Text="{Binding LabelExento}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			<TextBox Grid.Column="1" Name="_uEXENTOpercent" Margin="0 0 10 0" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding U_EXENTOpercent}"/>
+
+			<TextBlock Grid.Column="2" Text="{Binding LabelCuentaExento}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			<ComboBox Grid.Column="3" Name="_uCTAexento" Margin="0 0 10 0" FontSize="12" SelectedIndex="-1"
+									  BorderBrush="LightGray" BorderThickness="1" Padding="5"
+									  HorizontalAlignment="Stretch" VerticalAlignment="Center" >
+				<ComboBoxItem Content="Opción 1" />
+				<ComboBoxItem Content="Opción 2" />
+				<ComboBoxItem Content="Opción 3" />
+			</ComboBox>
+			
+			<TextBlock Grid.Column="4" Text="{Binding LabelTasa}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			<TextBox Grid.Column="5" Name="_uTASA" Margin="0 0 10 0" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding U_TASA}" />
+		</Grid>
+ 
+		<!-- Buttons -->
+		<Grid Grid.Row="5">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<Button Grid.Column="1"
+					Content="{Binding ButtonBack}"
+					FontFamily="Segoe UI"
+					Margin="0 0 10 0"
+					Command="{Binding BackCommand}"/>
+			<Button Grid.Column="2"
+					Content="{Binding Button}"
+					IsEnabled="True"
+					FontFamily="Segoe UI"
+					Background="SeaGreen"
+					Margin="0 0 10 0"
+					Command="{Binding SaveCommandCuenta}"/>
+		</Grid>
+		<!-- Cabecera -->
+		<Grid Grid.Row="6">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+			</Grid.ColumnDefinitions>
+			<TextBlock Grid.Column="0" Text="Perfil" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="1" Text="Documento" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="2" Text="Tipo de Documento Sap" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="3" Text="Tipo de Calculo" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="4" Text="% IVA" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="5" Text="cuenta IVA" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="6" Text="% IT" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="7" Text="Cuenta IT" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="8" Text="% IUE" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="9" Text="Cuenta IUE" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="10" Text="% RC-IVA" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="11" Text="cuenta RC-IVA" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="12" Text="% Exento" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="13" Text="Cuenta Excento" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+			<TextBlock Grid.Column="14" Text="% Tasa" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+		</Grid>
+	</Grid>	 
+</Window>       
