@@ -1,0 +1,143 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:EmailToSAPInvoice.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="EmailToSAPInvoice.Views.MainAccountsWindow"
+        Title="MainAccountsWindow">
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+		<vm:MainAccountsWindowViewModel/>
+	</Design.DataContext>
+	<Grid Margin="15">
+		<Grid.RowDefinitions>
+			<!-- Greeting -->
+			<RowDefinition Height="Auto" />
+			<!-- Primera Fila -->
+			<RowDefinition Height="Auto" />
+			<!-- Segunda Fila -->
+			<RowDefinition Height="Auto" />
+			<!-- Buttons -->
+			<RowDefinition Height="Auto" />
+			<!-- Cabecera -->
+			<RowDefinition Height="Auto" />
+			<!-- ResultPerfil -->
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<!-- Greeting -->
+		<TextBlock Grid.Row="0"
+					  Text="{Binding Greeting}"
+					  FontSize="18"
+					  FontWeight="Medium"
+					  FontFamily="Montserrat"
+					  TextAlignment="Center" />
+
+		<!-- Primera Fila -->
+		<Grid Grid.Row="1" Margin="0 10">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+			</Grid.ColumnDefinitions>
+			<TextBlock Grid.Column="0" Text="{Binding LabelDoc}" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			<ComboBox Grid.Column="1"
+					  Name="_docType"
+					  FontSize="12"
+					  SelectedIndex="-1"
+					  BorderBrush="LightGray"
+					  BorderThickness="1"
+					  Padding="5"
+					  HorizontalAlignment="Stretch"
+					  VerticalAlignment="Center"
+					  Items="{Binding DocumentoType}"
+					  SelectedItem="{Binding SelectedDocumento, Mode=TwoWay}" />
+
+			<TextBlock Grid.Column="2" Text="{Binding LabelAccount}" Margin="0 0 10 0" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			<ComboBox Grid.Column="3"
+					  Name="_docTypes"
+					  FontSize="12"
+					  SelectedIndex="-1"
+					  BorderBrush="LightGray"
+					  BorderThickness="1"
+					  Padding="5"
+					  HorizontalAlignment="Stretch"
+					  VerticalAlignment="Center"
+					  Items="{Binding NameConfig}"
+					  SelectedItem="{Binding SelectedcuentaType, Mode=TwoWay}" />
+			<TextBlock Grid.Column="4" Text="{Binding LabelCredit}" Margin="0 0 10 0" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			<TextBox Grid.Column="5" Name="_credit" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding Credit}"/>
+			<TextBlock Grid.Column="6" Text="{Binding LabelDebit}" Margin="0 0 10 0" TextWrapping="Wrap" FontSize="12" FontWeight="Medium"/>
+			<TextBox Grid.Column="7" Name="_debit" BorderBrush="LightGray" BorderThickness="1" Padding="5" FontSize="12" Text="{Binding Debit}"/>
+			<TextBlock Grid.Column="8" Text="{Binding LabelParther}" Margin="0 0 10 0" TextWrapping="Wrap" FontSize="12" FontWeight="Medium" />
+			<StackPanel Grid.Column="9" Orientation="Horizontal">
+				<RadioButton GroupName="Parther"
+							 Content="{Binding Opcion1}"
+							 Checked="RadioButton_Checked" />
+				<RadioButton GroupName="Parther"
+							 Content="{Binding Opcion2}"
+							 Checked="RadioButton_Checked" />
+			</StackPanel> 
+		</Grid> 
+		<!-- Buttons -->
+		<Grid Grid.Row="3">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<Button Grid.Column="1"
+					Content="{Binding ButtonBack}"
+					FontFamily="Segoe UI"
+					Margin="0 0 10 0"
+					Command="{Binding BackCommand}"/>
+			<Button Grid.Column="2"
+					Content="{Binding Button}"
+					IsEnabled="True"
+					FontFamily="Segoe UI"
+					Background="SeaGreen"
+					Margin="0 0 10 0"
+					Command="{Binding SaveCommand}"/>
+		</Grid>
+		<!-- Cabecera -->
+		<Grid Grid.Row="4">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="2*" />
+				<ColumnDefinition Width="2*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+			</Grid.ColumnDefinitions>
+			<TextBlock Grid.Column="0" Text="Tipo de Documento" FontWeight="Bold" FontSize="12"/>
+			<TextBlock Grid.Column="1" Text="Cuenta" FontWeight="Bold" FontSize="12"/>
+			<TextBlock Grid.Column="2" Text="Credit" FontWeight="Bold" FontSize="12"/>
+			<TextBlock Grid.Column="3" Text="Debit" FontWeight="Bold" FontSize="12"/>
+		</Grid>
+		<!-- ResultPerfil -->
+		<ListBox Grid.Row="5" Items="{Binding ResultCuentas}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="2*" />
+							<ColumnDefinition Width="2*" />
+							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="1*" /> 
+						</Grid.ColumnDefinitions>
+						<TextBlock Grid.Column="0" Text="{Binding TipoDoc}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="1" Text="{Binding Account}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="2" Text="{Binding Credit}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+						<TextBlock Grid.Column="3" Text="{Binding Debit}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="12"/>
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</Grid>
+</Window>

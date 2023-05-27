@@ -60,7 +60,7 @@ namespace EmailToSAPInvoice.Service
                 .Get<SapConfiguration>();
         }
 
-        /*public async Task ConnectToSAP1(List<FacturaBase> listInvoiceXML)
+        /*public async Task ConnectToSAP(List<FacturaBase> listInvoiceXML)
         {
             if (client == null)
             {
@@ -300,6 +300,77 @@ namespace EmailToSAPInvoice.Service
         }
         private async Task AccountingEntriesFunction(CancellationToken cancellationToken, List<FacturaBase> listInvoiceXML)
         {
+            try
+            {
+                foreach (var factura in listInvoiceXML)
+                {
+                    switch (factura)
+                    {
+                        case FacturaCompraVenta facturaCompraVenta:
+                            await FunctionFacturaCompra(cancellationToken, facturaCompraVenta);
+                            break;
+                        case FacturaServicioBasico facturaServicioBasico:
+                            await FunctionFacturaServicioBasico(cancellationToken, facturaServicioBasico);
+                            break;
+                        case FacturaServicioTuristicoHospedaje facturaServicioTuristicoHospedaje:
+                            await FunctionFacturaServicioTuristico(cancellationToken, facturaServicioTuristicoHospedaje);
+                            break;
+                        default:
+                            throw new Exception($"Tipo de factura desconocido: {factura.GetType().Name}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en AccountingEntriesFunction: {ex.Message}");
+            }
+        }
+        private async Task FunctionFacturaCompra(CancellationToken cancellationToken, FacturaCompraVenta facturaCompraVenta)
+        {
+            try
+            {
+                int cant = databaseHandler.CantAccounts("Compra Venta");
+                List<List<object>> accounts = databaseHandler.GetAccounts("Compra Venta");
+                List<object> allInvoiceLines = new List<object>(); // Almacena todas las invoiceLines
+
+                foreach (var account in accounts)
+                {
+                    var invoiceLines = facturaCompraVenta.detalle?.Select(d => new
+                    {
+                        AccountCode = (string)account[0],
+                        Credit = d.subTotal * (decimal)account[1],
+                        Debit = d.subTotal * (decimal)account[2]
+                    }).ToList();
+
+                    allInvoiceLines.AddRange(invoiceLines);
+                }
+                var invoiceJson = new
+                {
+                    JournalEntryLines = allInvoiceLines
+                };
+                string jsonContent = JsonConvert.SerializeObject(invoiceJson);
+                Console.Write("esto serializo: " + jsonContent + "\n");
+                HttpContent contentInvoice = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                var insertResponse = await client.PostAsync(config.Url + "JournalEntries", contentInvoice, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en FunctionFacturaCompra: {ex.Message}");
+            }
+        }
+
+        private Task FunctionFacturaServicioTuristico(CancellationToken cancellationToken, FacturaServicioTuristicoHospedaje facturaServicioTuristicoHospedaje)
+        {
+            throw new NotImplementedException();
+        }
+
+        private Task FunctionFacturaServicioBasico(CancellationToken cancellationToken, FacturaServicioBasico facturaServicioBasico)
+        {
+            throw new NotImplementedException();
+        } 
+
+        private async Task AccountingEntriesFunction1(CancellationToken cancellationToken, List<FacturaBase> listInvoiceXML)
+        {
             foreach (var factura in listInvoiceXML)
             {
                 try
@@ -372,13 +443,16 @@ namespace EmailToSAPInvoice.Service
                     CardCode = cardCode,
                     //DocDate = factura.cabecera.fechaEmision.ToString("yyyy-MM-dd"), //Descomentar considerar el tipo de cambio en la fecha para insertar factura
                     DocType = "I",
-                    DocumentLines = factura.detalle?.Select(d => d == null ? null : new
+                    DocumentLines = factura.detalle?.SelectMany(d => new[]
                     {
-                        ItemCode = d.codigoProducto.ToString(),
-                        Quantity = ((XmlNode[])d.cantidad)[0]?.InnerText,
-                        TaxCode = "IVA",
-                        UnitPrice = d.precioUnitario.ToString(CultureInfo.InvariantCulture),
-                        PriceAfterVAT = d.subTotal.ToString(CultureInfo.InvariantCulture)
+                        new
+                        {
+                            ItemCode = d.codigoProducto.ToString(),
+                            Quantity = ((XmlNode[])d.cantidad)[0]?.InnerText,
+                            TaxCode = "IVA",
+                            UnitPrice = d.precioUnitario.ToString(CultureInfo.InvariantCulture),
+                            PriceAfterVAT = d.subTotal.ToString(CultureInfo.InvariantCulture)
+                        }
                     }).ToList()
                 };
                 string jsonContent = JsonConvert.SerializeObject(invoiceJson);
@@ -413,13 +487,16 @@ namespace EmailToSAPInvoice.Service
                     CardCode = cardCode,
                     //DocDate = factura.cabecera.fechaEmision.ToString("yyyy-MM-dd"), //Descomentar considerar el tipo de cambio en la fecha para insertar factura
                     DocType = "S",
-                    DocumentLines = factura.detalle?.Select(d => d == null ? null : new
+                    DocumentLines = factura.detalle?.SelectMany(d => new[]
                     {
-                        ItemDescription = d.descripcion,
-                        TaxCode = "IVA",
-                        UnitPrice = d.precioUnitario.ToString(CultureInfo.InvariantCulture),
-                        PriceAfterVAT = d.subTotal.ToString(CultureInfo.InvariantCulture),
-                        AccountCode = config.SAPAccountCode
+                        new
+                        {
+                            ItemDescription = d.descripcion,
+                            TaxCode = "IVA",
+                            UnitPrice = d.precioUnitario.ToString(CultureInfo.InvariantCulture),
+                            PriceAfterVAT = d.subTotal.ToString(CultureInfo.InvariantCulture),
+                            AccountCode = config.SAPAccountCode
+                        }
                     }).ToList()
                 };
                 string jsonContent = JsonConvert.SerializeObject(invoiceJson);
@@ -504,8 +581,7 @@ namespace EmailToSAPInvoice.Service
                     var responseJson = await response.Content.ReadAsStringAsync();
                     var responseObject = JsonConvert.DeserializeObject<dynamic>(responseJson);
                     var createdCardCode = responseObject?.CardCode?.Value as string;
-                    statusMessage = $"Socio comercial {createdCardCode} creado exitosamente";
-                    Console.WriteLine(statusMessage);
+                    statusMessage = $"Socio comercial {createdCardCode} creado exitosamente"; 
                     return (createdCardCode, statusMessage);
                 }
                 else
@@ -564,9 +640,7 @@ namespace EmailToSAPInvoice.Service
             Console.WriteLine("Antes de salir: " + accountList);
             return accountList;
         }
-
-
-        // Clase para deserializar el JSON de ChartOfAccounts
+         
         public class ChartOfAccountsData
         {
             public List<Account> Value { get; set; }
@@ -578,9 +652,7 @@ namespace EmailToSAPInvoice.Service
             public string FormatCode { get; set; }
             public string Name { get; set; }
         }
-
-
-
+         
         public void Dispose()
         {
             handler?.Dispose();

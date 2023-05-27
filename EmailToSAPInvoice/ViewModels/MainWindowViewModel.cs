@@ -72,7 +72,7 @@ namespace EmailToSAPInvoice.ViewModels
             listInvoice = new List<FacturaBase>();
             GoToConfigWindow = ReactiveCommand.Create(() =>
             {
-                var configurationCuentaWindow = new MainConfigurationCuentaWindow();
+                var configurationCuentaWindow = new MainAccountsWindow();
                 configurationCuentaWindow.Show();
             });
         }
